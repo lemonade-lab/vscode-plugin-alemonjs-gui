@@ -169,7 +169,7 @@ export default function App() {
 
   return (
     <section className="relative h-full flex flex-col shadow-content ">
-      <div className="flex flex-row justify-between w-full  overflow-hidden border-b">
+      <div className="flex flex-row justify-between w-full  overflow-hidden border-b border-opacity-70">
         <div className="flex flex-row gap-3 px-2 py-1  cursor-pointer ">
           <div className="flex items-center">
             <img
@@ -231,7 +231,7 @@ export default function App() {
           ))}
         </section>
         <section className="w-full flex flex-row justify-center p-2 ">
-          <div className="flex gap-2 flex-col border shadow-inner rounded-md w-full p-2">
+          <div className="flex gap-2 flex-col border border-opacity-70 shadow-inner rounded-md w-full p-2">
             <input
               type="text"
               className="min-h-10 outline-none bg-opacity-0 px-3 rounded-md"
@@ -242,7 +242,7 @@ export default function App() {
             />
             <div className="flex flex-row justify-end">
               <div
-                className="border mx-2 px-3 cursor-pointer rounded-md flex items-center justify-center hover:bg-gray-100 "
+                className="border border-opacity-70 mx-2 px-3 cursor-pointer rounded-md flex items-center justify-center hover:bg-gray-100 "
                 onClick={() => sendMessage(value)}
               >
                 <SendIcon />
