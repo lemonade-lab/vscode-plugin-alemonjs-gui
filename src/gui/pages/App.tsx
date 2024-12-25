@@ -3,14 +3,64 @@ import GroupApp from '@/gui/pages/GroupApp';
 import PrivateApp from '@/gui/pages/PrivateApp';
 import ConfigApp from '@/gui/pages/ConfigApp';
 import classNames from 'classnames';
+import { config } from '../config';
+
+const postMessage = (message: any) => {
+  if (!acquireVsCodeApi) return;
+  const vscode = acquireVsCodeApi();
+  vscode.postMessage(message);
+};
+
 export default function App() {
   const [tag, setTag] = useState<'group' | 'private' | 'config'>('group');
+
+  /**
+   *
+   */
   const onClickConnect = () => {
-    console.log('connect');
+    // 关闭之前的连接
+    if (window.socket) {
+      window.socket.close();
+    }
+    const socket = new WebSocket(`ws://${config.host}:${config.port}`);
+    // 监听连接打开事件
+    socket.onopen = () => {
+      console.log('WebSocket 连接已建立');
+      postMessage({
+        type: 'window.showInformationMessage',
+        payload: {
+          text: 'WebSocket 连接已建立'
+        }
+      });
+    };
+    // 监听连接关闭事件
+    socket.onclose = () => {
+      console.log('WebSocket 连接已关闭');
+      postMessage({
+        type: 'window.showInformationMessage',
+        payload: {
+          text: 'WebSocket 连接已关闭'
+        }
+      });
+    };
+    window.socket = socket;
   };
+
+  /**
+   *
+   */
   const onClickDisconnect = () => {
-    console.log('disconnect');
+    if (window.socket) {
+      window.socket.close();
+    }
+    postMessage({
+      type: 'window.showInformationMessage',
+      payload: {
+        text: 'WebSocket 连接断开'
+      }
+    });
   };
+
   return (
     <section className="relative h-full flex flex-col shadow-content ">
       <div className="flex flex-row justify-between gap-2 py-1 px-2 border-b border-opacity-70">

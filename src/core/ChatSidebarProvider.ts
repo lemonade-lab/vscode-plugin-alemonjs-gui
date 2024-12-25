@@ -19,6 +19,19 @@ export class ChatSidebarProvider implements vscode.WebviewViewProvider {
         vscode.Uri.joinPath(this.context.extensionUri, 'dist', 'assets')
       ]
     };
+
+    webviewView.webview.onDidReceiveMessage(
+      message => {
+        switch (message.type) {
+          case 'window.showInformationMessage':
+            vscode.window.showInformationMessage(message.payload.text);
+            break;
+        }
+      },
+      undefined,
+      this.context.subscriptions
+    );
+
     webviewView.webview.html = this.getHtmlForWebview(webviewView.webview);
   }
 
@@ -33,19 +46,12 @@ export class ChatSidebarProvider implements vscode.WebviewViewProvider {
         vscode.Uri.joinPath(this.context.extensionUri, ...arg)
       );
     };
-    // 修改为。 读取文件 dist/index.html
-    // 正则匹配出 script 标签，将 src 替换为 scriptUri
-    // 正则匹配出 link 标签，将 href 替换为 styleUri
-    // 返回替换后的 html
-    // 读取文件内容
+
     const html = require('fs').readFileSync(
       this.context.asAbsolutePath('dist/index.html'),
       'utf-8'
     );
-    /**
-     *   <script type="module" crossorigin src="/assets/index.js"></script>
-     *   <link rel="stylesheet" crossorigin href="/assets/index.css">
-     */
+
     const scriptReg = /<script.*?src="(.+?)".*?>/g;
     const styleReg = /<link.*?href="(.+?)".*?>/g;
     const styleUri = getHTMLURL('dist', 'assets', 'index.css');

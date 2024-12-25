@@ -1,4 +1,9 @@
 import { useState } from 'react';
+import { config } from '@/gui/config';
+
+/**
+ * { "wsUri": "ws://localhost:9601", "httpUri": "http://localhost:9601" }
+ */
 
 /**
  * 频道： 增加、删除、更新。
@@ -69,13 +74,15 @@ export default function App() {
       <div className="flex flex-row gap-2 py-2">
         <input
           type="text"
+          value={config.host}
           className="min-w-0 outline-none bg-opacity-0 px-3 rounded-md border border-opacity-70"
-          placeholder="服务器地址"
+          placeholder="host"
         />
         <input
-          type="text"
+          type="number"
+          value={config.port}
           className="min-w-0 outline-none bg-opacity-0 px-3 rounded-md border border-opacity-70"
-          placeholder="端口"
+          placeholder="port"
         />
       </div>
     </section>

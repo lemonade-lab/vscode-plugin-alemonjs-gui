@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { SendIcon } from '@/gui/Icons';
 import dayjs from 'dayjs';
+import { config } from '../config';
 export default function App() {
   const [status, setStatus] = useState<'open' | 'close'>('close');
   const [socket, setSocket] = useState<WebSocket | null>(null);
@@ -14,11 +15,6 @@ export default function App() {
       createAt: string;
     }[]
   >([]);
-
-  const [config, setConfig] = useState({
-    wsUri: '',
-    httpUri: ''
-  });
 
   const [event, setEvent] = useState({
     Platform: '',
@@ -42,7 +38,7 @@ export default function App() {
    */
   const update = () => {
     // 创建 WebSocket 连接
-    const socket = new WebSocket(config.wsUri);
+    const socket = new WebSocket(`ws://${config.host}:${config.port}`);
     // 监听连接打开事件
     socket.onopen = () => {
       console.log('WebSocket 连接已建立');
@@ -217,7 +213,7 @@ export default function App() {
                     className="max-w-[20rem] xl:max-w-[25rem] rounded-md  "
                     src={
                       /^\/file/.test(item.value.d)
-                        ? `${config.httpUri}${item.value.d}`
+                        ? `http://${config.host}:${config.port}${item.value.d}`
                         : item.value.d
                     }
                     alt="Image"
