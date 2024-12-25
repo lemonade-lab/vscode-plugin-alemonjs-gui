@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { SendIcon } from '@/gui/Icons';
+import { SendIcon, Shuffle } from '@/gui/Icons';
 import dayjs from 'dayjs';
 export default function App() {
   const [status, setStatus] = useState<'open' | 'close'>('close');
@@ -169,6 +169,27 @@ export default function App() {
 
   return (
     <section className="relative h-full flex flex-col shadow-content ">
+      <div className="flex flex-row justify-between w-full  overflow-hidden border-b border-opacity-70">
+        <div className="flex flex-row gap-3 px-2 py-1  cursor-pointer ">
+          <div className="flex items-center">
+            <img
+              className="w-10 h-10 rounded-full "
+              src={USER_URI}
+              alt="Avatar"
+            />
+          </div>
+          <div className="flex flex-col justify-center">
+            <div className="font-semibold">测试群1</div>
+            <div className="text-sm text-gray-500">2024-12-25</div>
+          </div>
+        </div>
+        <div className="flex-row cursor-pointer flex items-center px-4 hover:bg-gray-100">
+          {
+            // 切换
+          }
+          <Shuffle />
+        </div>
+      </div>
       <div className="flex-1 flex flex-col shadow-md">
         <section
           ref={MessageWindowRef}

@@ -1,8 +1,8 @@
 type IconProps = {
-  width?: string
-  height?: string
-  color?: string
-}
+  width?: string;
+  height?: string;
+  color?: string;
+};
 
 export const SettingIcon = ({ width, height }: IconProps = {}) => {
   return (
@@ -26,8 +26,8 @@ export const SettingIcon = ({ width, height }: IconProps = {}) => {
         fill="#343C54"
       />
     </svg>
-  )
-}
+  );
+};
 
 export const HelpIcon = ({ width, height }: IconProps = {}) => {
   return (
@@ -53,8 +53,8 @@ export const HelpIcon = ({ width, height }: IconProps = {}) => {
         fill="currentColor"
       />
     </svg>
-  )
-}
+  );
+};
 
 export const ChatbotIcon = ({ width, height }: IconProps = {}) => {
   return (
@@ -68,14 +68,17 @@ export const ChatbotIcon = ({ width, height }: IconProps = {}) => {
         d="M291.81 825.32c-7.54 0-15.48-1.94-23.79-5.83l-1.17-0.55-1.08-0.72c-29.9-19.83-52.52-66.99-67.22-140.19-10.83-53.91-17.04-121.46-17.04-185.32 0-55.5 4.87-97.14 15.31-131.03 11.54-37.44 30.34-66 57.46-87.29 50.48-39.63 129.43-55.79 272.52-55.79 69.92 0 122.26 3.75 164.74 11.81 46.29 8.78 81.76 23.16 108.43 43.95 27.33 21.31 46.29 49.85 57.97 87.27 10.61 33.99 15.55 75.65 15.55 131.09s-4.94 97.16-15.55 131.25c-11.68 37.53-30.63 66.19-57.93 87.63-26.7 20.96-62.17 35.47-108.44 44.36-42.59 8.18-94.95 11.99-164.78 11.99-60.39 0-104.7-2.74-148.17-9.15-15.78-2.33-22.97 6.31-36.76 28.09-7.07 11.17-14.39 22.72-25.16 30.32-7.68 5.42-16.01 8.13-24.9 8.13z m-7.73-36.97c10.17 4.54 13.68 2.77 28.22-20.2 6.54-10.33 13.95-22.04 24.42-30.88 13.39-11.32 29.21-15.73 47.02-13.1 41.68 6.15 84.47 8.77 143.06 8.77 132.73 0 207.98-14.62 251.61-48.87 21.84-17.14 36.49-39.54 46.12-70.49 9.53-30.62 13.97-69.02 13.97-120.85s-4.44-90.15-13.96-120.67c-9.62-30.81-24.26-53.08-46.08-70.09-43.49-33.9-118.75-48.36-251.66-48.36s-207.76 14.45-250.91 48.32c-42.18 33.12-59.39 88.39-59.39 190.8 0 61.65 5.96 126.68 16.36 178.42 12.24 60.95 30.4 102.47 51.23 117.21z"
         fill="currentColor"
       ></path>
-      <path d="M356.72 498m-47 0a47 47 0 1 0 94 0 47 47 0 1 0-94 0Z" fill="#CCCCCC"></path>
+      <path
+        d="M356.72 498m-47 0a47 47 0 1 0 94 0 47 47 0 1 0-94 0Z"
+        fill="#CCCCCC"
+      ></path>
       <path
         d="M356.72 560c-34.19 0-62-27.81-62-62s27.81-62 62-62 62 27.81 62 62-27.81 62-62 62z m0-94c-17.64 0-32 14.35-32 32s14.36 32 32 32 32-14.35 32-32-14.36-32-32-32zM530.51 560c-34.19 0-62-27.81-62-62s27.81-62 62-62 62 27.81 62 62-27.81 62-62 62z m0-94c-17.64 0-32 14.35-32 32s14.36 32 32 32 32-14.35 32-32-14.36-32-32-32zM704.31 560c-34.19 0-62-27.81-62-62s27.81-62 62-62 62 27.81 62 62-27.81 62-62 62z m0-94c-17.64 0-32 14.35-32 32s14.36 32 32 32 32-14.35 32-32-14.36-32-32-32z"
         fill="currentColor"
       ></path>
     </svg>
-  )
-}
+  );
+};
 
 export const BackIcon = ({ width, height }: IconProps = {}) => {
   return (
@@ -117,8 +120,8 @@ export const BackIcon = ({ width, height }: IconProps = {}) => {
         fill="#343C54"
       />
     </svg>
-  )
-}
+  );
+};
 
 export const WhiteIcon = ({ width, height }: IconProps = {}) => {
   return (
@@ -136,8 +139,8 @@ export const WhiteIcon = ({ width, height }: IconProps = {}) => {
         fill="#343C54"
       />
     </svg>
-  )
-}
+  );
+};
 
 export const AppsIcon = ({ width, height }: IconProps = {}) => {
   return (
@@ -160,8 +163,8 @@ export const AppsIcon = ({ width, height }: IconProps = {}) => {
         fill="currentColor"
       ></path>
     </svg>
-  )
-}
+  );
+};
 
 export const SendIcon = ({ width, height }: IconProps = {}) => {
   return (
@@ -180,8 +183,8 @@ export const SendIcon = ({ width, height }: IconProps = {}) => {
         fill="currentColor"
       ></path>
     </svg>
-  )
-}
+  );
+};
 
 export const MenuMoreIcon = ({ width, height }: IconProps = {}) => {
   return (
@@ -210,8 +213,8 @@ export const MenuMoreIcon = ({ width, height }: IconProps = {}) => {
         fill="#FFFFFF"
       />
     </svg>
-  )
-}
+  );
+};
 
 export const GlobeIcon = ({ width, height }: IconProps = {}) => {
   return (
@@ -238,8 +241,8 @@ export const GlobeIcon = ({ width, height }: IconProps = {}) => {
         fill="currentColor"
       ></path>
     </svg>
-  )
-}
+  );
+};
 
 export const MenuIcon = ({ width, height }: IconProps = {}) => {
   return (
@@ -263,8 +266,8 @@ export const MenuIcon = ({ width, height }: IconProps = {}) => {
         fill="#FFFFFF"
       />
     </svg>
-  )
-}
+  );
+};
 
 export const MinimizeIcon = (props: React.SVGProps<SVGSVGElement>) => {
   return (
@@ -280,8 +283,8 @@ export const MinimizeIcon = (props: React.SVGProps<SVGSVGElement>) => {
         fill="currentColor"
       ></path>
     </svg>
-  )
-}
+  );
+};
 
 export const MaximizeIcon = (props: React.SVGProps<SVGSVGElement>) => {
   return (
@@ -297,8 +300,8 @@ export const MaximizeIcon = (props: React.SVGProps<SVGSVGElement>) => {
         fill="currentColor"
       ></path>
     </svg>
-  )
-}
+  );
+};
 export const OverMaximizeIcon = (props: React.SVGProps<SVGSVGElement>) => {
   return (
     <svg
@@ -313,8 +316,8 @@ export const OverMaximizeIcon = (props: React.SVGProps<SVGSVGElement>) => {
         fill="currentColor"
       ></path>
     </svg>
-  )
-}
+  );
+};
 
 export const CloseIcon = (props: React.SVGProps<SVGSVGElement>) => {
   return (
@@ -330,8 +333,8 @@ export const CloseIcon = (props: React.SVGProps<SVGSVGElement>) => {
         fill="currentColor"
       ></path>
     </svg>
-  )
-}
+  );
+};
 
 export const VSCodeIcon = (props: React.SVGProps<SVGSVGElement>) => {
   return (
@@ -341,8 +344,8 @@ export const VSCodeIcon = (props: React.SVGProps<SVGSVGElement>) => {
         fill="currentColor"
       />
     </svg>
-  )
-}
+  );
+};
 
 export const CodeIcon = ({ width, height }: IconProps = {}) => {
   return (
@@ -373,8 +376,8 @@ export const CodeIcon = ({ width, height }: IconProps = {}) => {
         fill="currentColor"
       ></path>
     </svg>
-  )
-}
+  );
+};
 
 export const RefreshIcon = ({ width, height }: IconProps = {}) => {
   return (
@@ -394,8 +397,8 @@ export const RefreshIcon = ({ width, height }: IconProps = {}) => {
         fill="#343C54"
       />
     </svg>
-  )
-}
+  );
+};
 
 export const AboutIcon = ({ width, height }: IconProps = {}) => {
   return (
@@ -415,8 +418,8 @@ export const AboutIcon = ({ width, height }: IconProps = {}) => {
         fill="#231815"
       ></path>
     </svg>
-  )
-}
+  );
+};
 
 export const StartIcon = ({ width, height }: IconProps = {}) => {
   return (
@@ -453,8 +456,8 @@ export const StartIcon = ({ width, height }: IconProps = {}) => {
         fill="currentColor"
       ></path>
     </svg>
-  )
-}
+  );
+};
 
 // 带圆圈的加号
 export const CirclePlusIcon = ({ width, height, color }: IconProps = {}) => {
@@ -470,8 +473,8 @@ export const CirclePlusIcon = ({ width, height, color }: IconProps = {}) => {
         fill={color ?? 'currentColor'}
       ></path>
     </svg>
-  )
-}
+  );
+};
 
 export const ArrowsDownIcon = ({ width, height, color }: IconProps = {}) => {
   return (
@@ -486,8 +489,8 @@ export const ArrowsDownIcon = ({ width, height, color }: IconProps = {}) => {
         fill={color ?? 'currentColor'}
       />
     </svg>
-  )
-}
+  );
+};
 
 export const ArrowsRightIcon = ({ width, height, color }: IconProps = {}) => {
   return (
@@ -514,5 +517,28 @@ export const ArrowsRightIcon = ({ width, height, color }: IconProps = {}) => {
         </clipPath>
       </defs>
     </svg>
-  )
-}
+  );
+};
+
+/**
+ *
+ * @param props
+ * @returns
+ */
+export const Shuffle = (props: React.SVGProps<SVGSVGElement>) => {
+  return (
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 25 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        d="M18.9699 3.71967C19.2628 3.42678 19.7376 3.42678 20.0305 3.71967L22.2804 5.96957C22.5733 6.26246 22.5733 6.73733 22.2804 7.03023L20.0303 9.28033C19.7374 9.57322 19.2626 9.57322 18.9697 9.28033C18.6768 8.98744 18.6768 8.51256 18.9697 8.21967L19.9393 7.25L17.1865 7.25C16.9685 7.25 16.7614 7.34482 16.6189 7.50979L12.741 12L16.6189 16.4902C16.7614 16.6552 16.9685 16.75 17.1865 16.75H19.9395L18.9699 15.7803C18.677 15.4874 18.677 15.0126 18.9699 14.7197C19.2628 14.4268 19.7376 14.4268 20.0305 14.7197L22.2804 16.9696C22.5733 17.2625 22.5733 17.7373 22.2804 18.0302L20.0303 20.2803C19.7374 20.5732 19.2626 20.5732 18.9697 20.2803C18.6768 19.9874 18.6768 19.5126 18.9697 19.2197L19.9393 18.25H17.1865C16.5326 18.25 15.9111 17.9655 15.4837 17.4706L11.75 13.1475L8.01634 17.4706C7.58894 17.9655 6.96738 18.25 6.31349 18.25H3.25C2.83579 18.25 2.5 17.9142 2.5 17.5C2.5 17.0858 2.83579 16.75 3.25 16.75H6.31349C6.53145 16.75 6.73864 16.6552 6.8811 16.4902L10.759 12L6.8811 7.50979C6.73864 7.34482 6.53145 7.25 6.31349 7.25H3.25C2.83579 7.25 2.5 6.91421 2.5 6.5C2.5 6.08579 2.83579 5.75 3.25 5.75H6.31349C6.96738 5.75 7.58894 6.03447 8.01634 6.52936L11.75 10.8525L15.4837 6.52936C15.9111 6.03447 16.5326 5.75 17.1865 5.75L19.9395 5.75L18.9699 4.78033C18.677 4.48744 18.677 4.01256 18.9699 3.71967Z"
+        fill="#323544"
+      />
+    </svg>
+  );
+};

@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+
 export class ChatSidebarProvider implements vscode.WebviewViewProvider {
   /**
    *
@@ -23,9 +24,39 @@ export class ChatSidebarProvider implements vscode.WebviewViewProvider {
     webviewView.webview.onDidReceiveMessage(
       message => {
         switch (message.type) {
-          case 'window.showInformationMessage':
+          case 'window.showInformationMessage': {
             vscode.window.showInformationMessage(message.payload.text);
             break;
+          }
+          case 'fs.readFile.config': {
+            const dir = this.context.asAbsolutePath('dist/config.json');
+            if (!require('fs').existsSync(dir)) {
+              const config = {
+                host: 'localhost',
+                port: '9601'
+              };
+              // 发送消息
+              webviewView.webview.postMessage({
+                // 按主动消息格式返回
+                type: 'fs.readFile.config',
+                payload: config
+              });
+              // 写入文件
+              require('fs').writeFileSync(dir, JSON.stringify(config));
+              return;
+            }
+            const data = require('fs').readFileSync(dir, 'utf-8');
+            webviewView.webview.postMessage({
+              type: 'fs.readFile.config',
+              payload: JSON.parse(data)
+            });
+            break;
+          }
+          case 'fs.writeFile.config': {
+            const dir = this.context.asAbsolutePath('dist/config.json');
+            require('fs').writeFileSync(dir, JSON.stringify(message.payload));
+            break;
+          }
         }
       },
       undefined,

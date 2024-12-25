@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { SendIcon } from '@/gui/Icons';
+import { SendIcon, Shuffle } from '@/gui/Icons';
 import dayjs from 'dayjs';
 import { config } from '../config';
 export default function App() {
@@ -183,7 +183,7 @@ export default function App() {
           // 切换下一个用户
         }
         <div className="flex-row cursor-pointer flex items-center px-4 hover:bg-gray-100">
-          ...
+          <Shuffle />
         </div>
       </div>
       <div className="flex-1 flex flex-col ">
