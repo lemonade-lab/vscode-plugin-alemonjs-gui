@@ -48,7 +48,7 @@ export default function App({
         </div>
 
         <div className="md:flex-1 flex flex-col gap-2 py-2 border-y px-2 border-[var(--vscode-sidebar-border)]">
-          <div className="font-semibold">用户配置</div>
+          <div className="font-semibold">频道配置</div>
           <input
             type="text"
             value={Data.GuildId}
