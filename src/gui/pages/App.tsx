@@ -28,6 +28,7 @@ export default function App() {
   });
 
   useEffect(() => {
+    if (!window.vscode) return;
     // 等待配置信息
     const handleResponse = (event: any) => {
       console.log('handleResponse');
@@ -38,12 +39,6 @@ export default function App() {
       if (message.type === 'fs.readFile.message') {
         setData(message.payload);
       }
-      vscode.postMessage({
-        type: 'window.showInformationMessage',
-        payload: {
-          text: '配置加载成功'
-        }
-      });
     };
     // 请求得到配置
     vscode.postMessage({
@@ -148,7 +143,7 @@ export default function App() {
   };
 
   return (
-    <section className="relative h-full flex flex-col shadow-content bg-[var(--vscode-sideBar-foreground)] text-[var(--vscode-activityBar-activeBackground)]">
+    <section className="overflow-hidden flex flex-1 flex-col bg-[var(--vscode-sideBar-foreground)] text-[var(--vscode-activityBar-activeBackground)]">
       <div className="select-none flex flex-row justify-between gap-2 py-1 px-2 border-b border-opacity-70 border-[var(--vscode-sidebar-border)]">
         <div className="flex flex-1 flex-row gap-2">
           <button
@@ -197,7 +192,7 @@ export default function App() {
           </div>
         </div>
       </div>
-      <div className="flex-1 overflow-auto bg-[var(--vscode-sideBar-foreground)]">
+      <div className="flex-1 flex flex-col overflow-hidden bg-[var(--vscode-sideBar-foreground)]">
         {tag === 'config' && (
           <ConfigApp
             config={config}

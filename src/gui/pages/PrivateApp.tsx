@@ -70,6 +70,7 @@ export default function App({
   const sendMessage = (msg: string) => {
     if (!status) return;
     if (window.socket && msg != '') {
+      // 使用函数式更新
       setMessage(prevMessages =>
         prevMessages.concat([
           {
@@ -82,6 +83,11 @@ export default function App({
           }
         ])
       );
+
+      // 清空
+      setValue('');
+
+      // 发送消息
       window.socket.send(
         JSON.stringify({
           t: 'send_private_message',
@@ -98,12 +104,10 @@ export default function App({
   };
 
   //
-
   const MessageWindowRef = useRef<HTMLElement>(null);
+
   // 变动时自动清理
   useEffect(() => {
-    // 清空
-    setValue('');
     if (MessageWindowRef.current) {
       // 滚动到底部
       MessageWindowRef.current.scrollTo(
@@ -118,27 +122,28 @@ export default function App({
       event.preventDefault(); // 防止表单提交
       setValue(value + '\n'); // 在当前文本后添加换行符
     } else if (event.key === 'Enter') {
+      event.preventDefault();
       sendMessage(value);
     }
   };
 
   return (
-    <section className="relative h-full flex flex-col shadow-content">
-      <section className="select-none flex flex-row justify-between w-full overflow-hidden border-b border-[var(--vscode-sidebar-border)] border-opacity-70">
+    <section className="flex-1 flex flex-col  overflow-auto">
+      <section className="select-none flex flex-row justify-between w-full  border-b border-[var(--vscode-sidebar-border)] border-opacity-70">
         <div className="flex flex-row gap-3 px-2 py-1 cursor-pointer">
           <div className="flex items-center">
             <img
               className="w-10 h-10 rounded-full"
-              src={Data.ChannelAvatar}
+              src={Data.BotAvatar}
               alt="Avatar"
             />
           </div>
           <div className="flex flex-col justify-center">
             <div className="font-semibold text-[var(--vscode-activityBar-activeBackground)]">
-              {Data.UserName}
+              {Data.BotName}
             </div>
             <div className="text-sm text-[var(--vscode-text-selection-foreground)]">
-              测试用户
+              机器人
             </div>
           </div>
         </div>
@@ -149,11 +154,11 @@ export default function App({
         </div>
       </section>
 
-      <div className="flex-1 flex flex-col">
-        <section
-          ref={MessageWindowRef}
-          className="flex-1 px-3 py-2 overflow-y-auto flex gap-1 flex-col "
-        >
+      <section
+        ref={MessageWindowRef}
+        className="flex-1 w-full h-full flex flex-col overflow-auto"
+      >
+        <section className="flex-1 px-3 py-2 overflow-auto flex gap-1 flex-col ">
           {message.map((item, index) => (
             <div
               key={index}
@@ -191,28 +196,29 @@ export default function App({
             </div>
           ))}
         </section>
+      </section>
 
-        {/* 输入框和发送按钮 */}
-        <section className="select-none w-full flex flex-row justify-center p-4">
-          <div className="flex gap-2 flex-col border border-[var(--vscode-sidebar-border)] bg-[var(--vscode-editor-background)] border-opacity-70 shadow-inner rounded-md w-full p-2">
-            <textarea
-              className="min-h-20 max-h-64  border-0 focus:border-0 bg-opacity-0 bg-[var(--vscode-editor-background)] p-2 rounded-md text-[var(--vscode-activityBar-activeBackground)]"
-              value={value}
-              onChange={e => setValue(e.target.value)}
-              placeholder="输入内容..."
-              onKeyDown={handleKeyDown}
-            />
-            <div className="flex flex-row justify-end">
-              <div
-                className="border border-[var(--vscode-sidebar-border)] border-opacity-70  px-3 cursor-pointer rounded-md flex items-center justify-center hover:bg-[var(--vscode-button-background)]"
-                onClick={() => sendMessage(value)}
-              >
-                <SendIcon />
-              </div>
+      {/* 输入框和发送按钮 */}
+      <section className="select-none w-full flex flex-row justify-center p-4">
+        <div className="flex gap-2 flex-col border border-[var(--vscode-sidebar-border)] bg-[var(--vscode-editor-background)] border-opacity-70 shadow-inner rounded-md w-full p-2">
+          <textarea
+            className="min-h-20 max-h-64  border-0 focus:border-0 bg-opacity-0 bg-[var(--vscode-editor-background)] p-2 rounded-md text-[var(--vscode-activityBar-activeBackground)]"
+            value={value}
+            onChange={e => setValue(e.target.value)}
+            placeholder="输入内容..."
+            onKeyDown={handleKeyDown}
+          />
+          <div className="flex flex-row justify-between">
+            <div>Control+Enter 换行</div>
+            <div
+              className="border border-[var(--vscode-sidebar-border)] border-opacity-70  px-3 cursor-pointer rounded-md flex items-center justify-center hover:bg-[var(--vscode-button-background)]"
+              onClick={() => sendMessage(value)}
+            >
+              <SendIcon />
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
     </section>
   );
 }

@@ -3,11 +3,11 @@
     height: 0px;
 }
 
-$scrollbar-thumb-color: #64748b;
+$scrollbar-thumb-color: var(--vscode-button-background);
 $scrollbar-track-color: transparent;
 $scrollbar-thumb-radius: 1rem;
 $scrollbar-width: thin;
-$scrollbar-color: #b5b7ba6b;
+$scrollbar-color: var(--vscode-button-background);
 
 .scrollbar {
 

@@ -57,7 +57,7 @@ export class ChatSidebarProvider implements vscode.WebviewViewProvider {
     if (!require('fs').existsSync(dir)) {
       const config = {
         BotId: '794161769',
-        BotName: 'AlemonJS',
+        BotName: '阿柠檬',
         BotAvatar: 'https://q1.qlogo.cn/g?b=qq&s=0&nk=794161769',
         UserId: '1715713638',
         UserName: '柠檬冲水',
@@ -161,7 +161,7 @@ export class ChatSidebarProvider implements vscode.WebviewViewProvider {
       .readFileSync(this.context.asAbsolutePath('dist-gui/index.html'), 'utf-8')
       .replace(
         '<head>',
-        `<head> <script> const vscode = acquireVsCodeApi() </script>`
+        `<head> <script> const vscode = acquireVsCodeApi();window.vscode = vscode; </script>`
       )
       .replace(
         scriptReg,
