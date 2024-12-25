@@ -28,7 +28,8 @@ export default defineConfig(({ mode }) => {
       }
     },
     esbuild: {
-      drop: process.env.NODE_ENV === 'development' ? [] : ['console', 'debugger']
+      drop:
+        process.env.NODE_ENV === 'development' ? [] : ['console', 'debugger']
     },
     build: {
       commonjsOptions: {
@@ -43,8 +44,9 @@ export default defineConfig(({ mode }) => {
       },
       rollupOptions: {
         output: {
+          dir: 'dist-gui',
           entryFileNames: `assets/index.js`,
-          assetFileNames: `assets/[name].[ext]`,
+          assetFileNames: `assets/[name].[ext]`
         }
       }
     }

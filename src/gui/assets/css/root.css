@@ -1,5 +1,8 @@
 :root {
-  --font-family: 'Roboto', 'Noto Sans SC', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  --code-font: 'Fira Code', 'Roboto', 'Noto Sans SC', Inter, system-ui, Avenir, Helvetica, Arial,
-    sans-serif;
+    /* 编辑器背景颜色 */
+    --editor-background: #002b36;
+    /* Solarized Dark 背景色 */
+    /* 侧边栏背景颜色 */
+    --sidebar-background: #073642;
+    /* Solarized 深绿色背景色用于侧边栏 */
 }

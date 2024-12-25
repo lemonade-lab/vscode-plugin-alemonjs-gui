@@ -6,6 +6,8 @@ import classNames from 'classnames';
 import { postMessage } from '../vscode';
 
 export default function App() {
+  const [status, setStatus] = useState<boolean>(false);
+
   const [tag, setTag] = useState<'group' | 'private' | 'config'>('config');
 
   const [config, setConfig] = useState({
@@ -49,6 +51,7 @@ export default function App() {
     // 监听连接打开事件
     socket.onopen = () => {
       console.log('WebSocket 连接已建立');
+      setStatus(true);
       postMessage({
         type: 'window.showInformationMessage',
         payload: {
@@ -58,6 +61,7 @@ export default function App() {
     };
     // 监听连接关闭事件
     socket.onclose = () => {
+      setStatus(false);
       console.log('WebSocket 连接已关闭');
       postMessage({
         type: 'window.showInformationMessage',
@@ -90,27 +94,28 @@ export default function App() {
   };
 
   return (
-    <section className="relative h-full flex flex-col shadow-content ">
-      <div className="flex flex-row justify-between gap-2 py-1 px-2 border-b border-opacity-70">
+    <section className="relative h-full flex flex-col shadow-content bg-[var(--vscode-sideBar-foreground)] text-[var(--vscode-activityBar-activeBackground)]">
+      <div className="select-none flex flex-row justify-between gap-2 py-1 px-2 border-b border-opacity-70 border-[var(--vscode-sidebar-border)]">
         <div className="flex flex-1 flex-row gap-2">
           <button
             onClick={onClickConnect}
-            className="px-2 flex items-center cursor-pointer rounded-md py-1 hover:text-gray-100 bg-opacity-70"
+            className="px-2 flex items-center cursor-pointer rounded-md py-1 hover:bg-[var(--vscode-activityBar-background)] "
           >
             连接
           </button>
           <button
             onClick={onClickDisconnect}
-            className="px-2 flex items-center cursor-pointer rounded-md py-1 hover:text-gray-100 bg-opacity-70"
+            className="px-2 flex items-center cursor-pointer rounded-md py-1 hover:bg-[var(--vscode-activityBar-background)] "
           >
             断开
           </button>
         </div>
-        <div className="flex flex-row">
+        <div className="flex flex-row gap-2">
           <div
             className={classNames(
               'px-2 flex items-center cursor-pointer rounded-md py-1',
-              tag === 'group' && 'text-gray-100 '
+              tag === 'group' &&
+                'bg-[var(--vscode-activityBar-background)] text-[var(--vscode-activityBar-activeBackground)]'
             )}
             onClick={() => setTag('group')}
           >
@@ -119,7 +124,8 @@ export default function App() {
           <div
             className={classNames(
               'px-2 flex items-center cursor-pointer rounded-md py-1',
-              tag === 'private' && 'text-gray-100 '
+              tag === 'private' &&
+                'bg-[var(--vscode-activityBar-background)] text-[var(--vscode-activityBar-activeBackground)]'
             )}
             onClick={() => setTag('private')}
           >
@@ -128,7 +134,8 @@ export default function App() {
           <div
             className={classNames(
               'px-2 flex items-center cursor-pointer rounded-md py-1',
-              tag === 'config' && 'text-gray-100 '
+              tag === 'config' &&
+                'bg-[var(--vscode-activityBar-background)] text-[var(--vscode-activityBar-activeBackground)]'
             )}
             onClick={() => setTag('config')}
           >
@@ -136,7 +143,7 @@ export default function App() {
           </div>
         </div>
       </div>
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto bg-[var(--vscode-sideBar-foreground)]">
         {tag === 'config' && (
           <ConfigApp
             config={config}
@@ -144,8 +151,8 @@ export default function App() {
             onClickConfigSave={onClickConfigSave}
           />
         )}
-        {tag === 'private' && <PrivateApp />}
-        {tag === 'group' && <GroupApp />}
+        {tag === 'private' && <PrivateApp status={status} />}
+        {tag === 'group' && <GroupApp status={status} />}
       </div>
     </section>
   );

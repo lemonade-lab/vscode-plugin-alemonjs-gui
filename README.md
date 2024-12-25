@@ -1,19 +1,20 @@
-# alemonjs gui vscode plugin
+# AlemonJS GUI
 
-在vscode中进行gui开发调试的插件
+这是一个可以在vscode中使用gui平台进行测试的插件。
 
-- 加载依赖
+新增alemon.config.yaml文件并配置。
 
-```sh
-yarn install
+- alemon.config.yaml
+
+```yaml
+gui:
+  port: 9601
 ```
 
-- 打包html
+拉取开发模版后，一般需要这样去启动服务
 
 ```sh
-yarn build
+yarn run dev --login gui
 ```
 
-- 运行调试
-
-使用 vscode 运行调试 Run Extension (alemonjs)
+启动后，需要点击`连接`才可以进行后续操作

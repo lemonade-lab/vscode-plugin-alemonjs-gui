@@ -16,8 +16,8 @@ export class ChatSidebarProvider implements vscode.WebviewViewProvider {
       enableScripts: true,
       localResourceRoots: [
         vscode.Uri.joinPath(this.context.extensionUri),
-        vscode.Uri.joinPath(this.context.extensionUri, 'dist'),
-        vscode.Uri.joinPath(this.context.extensionUri, 'dist', 'assets')
+        vscode.Uri.joinPath(this.context.extensionUri, 'dist-gui'),
+        vscode.Uri.joinPath(this.context.extensionUri, 'dist-gui', 'assets')
       ]
     };
 
@@ -77,16 +77,14 @@ export class ChatSidebarProvider implements vscode.WebviewViewProvider {
         vscode.Uri.joinPath(this.context.extensionUri, ...arg)
       );
     };
-
     const html = require('fs').readFileSync(
-      this.context.asAbsolutePath('dist/index.html'),
+      this.context.asAbsolutePath('dist-gui/index.html'),
       'utf-8'
     );
-
     const scriptReg = /<script.*?src="(.+?)".*?>/g;
     const styleReg = /<link.*?href="(.+?)".*?>/g;
-    const styleUri = getHTMLURL('dist', 'assets', 'index.css');
-    const scriptUri = getHTMLURL('dist', 'assets', 'index.js');
+    const styleUri = getHTMLURL('dist-gui', 'assets', 'index.css');
+    const scriptUri = getHTMLURL('dist-gui', 'assets', 'index.js');
     // 替换 script
     const newHtml = html.replace(
       scriptReg,
@@ -97,6 +95,7 @@ export class ChatSidebarProvider implements vscode.WebviewViewProvider {
       styleReg,
       `<link rel="stylesheet" crossorigin href="${styleUri}">`
     );
+
     return finalHtml;
   }
 }

@@ -1,81 +1,67 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { SendIcon, Shuffle } from '@/gui/Icons';
 import dayjs from 'dayjs';
-import { config } from '../config';
-export default function App() {
-  const [status, setStatus] = useState<'open' | 'close'>('close');
-  const [socket, setSocket] = useState<WebSocket | null>(null);
+import { BOT_URI, config, USER_URI } from '../config';
+
+type Text = {
+  t: 'Text';
+  d: string;
+};
+
+type Image = {
+  t: 'Image';
+  d: {
+    url_data?: string;
+    url_index?: string;
+  };
+};
+
+export default function App({ status }: { status: boolean }) {
+  const [value, setValue] = useState('');
   const [message, setMessage] = useState<
     {
       bot: boolean;
-      value: {
-        t: string;
-        d: any;
-      };
+      value: Image | Text;
       createAt: string;
     }[]
   >([]);
 
-  const [event, setEvent] = useState({
-    Platform: '',
-    GuildId: '',
-    ChannelId: '',
-    IsMaster: 0,
-    UserId: '',
-    UserName: '',
-    MessageText: '',
-    MsgId: '',
-    OpenID: ''
-  });
+  const User = {
+    UserId: '1715713638',
+    UserName: '柠檬冲水',
+    OpenId: '1715713638'
+  };
 
-  const [value, setValue] = useState('');
-
-  const USER_URI = 'https://q1.qlogo.cn/g?b=qq&s=0&nk=1715713638';
-
-  /**
-   * 刷新状态
-   * @returns
-   */
-  const update = () => {
-    // 创建 WebSocket 连接
-    const socket = new WebSocket(`ws://${config.host}:${config.port}`);
-    // 监听连接打开事件
-    socket.onopen = () => {
-      console.log('WebSocket 连接已建立');
-      setStatus('open');
-    };
+  useEffect(() => {
+    if (!window.socket) {
+      return;
+    }
     // 监听消息事件
-    socket.onmessage = db => {
+    window.socket.onmessage = db => {
       const event = JSON.parse(db.data);
-      console.log('event', event);
-      if (event.t == 'send_message') {
-        const txt = event.d.MsgBody.find((item: any) => item.t == 'text');
-        if (txt) {
+      if (event.t == 'send_private_message') {
+        // 获取文本消息
+        const Text = event.d.find((item: any) => item.t == 'Text');
+        if (Text) {
           // 使用函数式更新
           setMessage(prevMessages =>
             prevMessages.concat([
               {
                 bot: true,
-                value: {
-                  t: 'text',
-                  d: txt.d
-                },
+                value: Text,
                 createAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
               }
             ])
           );
         }
-        const img = event.d.MsgBody.find((item: any) => item.t == 'image');
-        if (img) {
-          console.log('img.d', img.d);
+        // 获取图片消息
+        const image = event.d.find((item: any) => item.t == 'Image');
+        if (image) {
           setMessage(prevMessages =>
             prevMessages.concat([
               {
                 bot: true,
-                value: {
-                  t: 'image',
-                  d: img.d.url
-                },
+                value: image,
                 createAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
               }
             ])
@@ -83,41 +69,49 @@ export default function App() {
         }
       }
     };
-    // 监听连接关闭事件
-    socket.onclose = () => {
-      setStatus('close');
-      console.log('WebSocket 连接已关闭');
-      alert('连接关闭');
-    };
-    return socket;
+  });
+
+  /**
+   *
+   * @param msg
+   */
+  const sendMessage = (msg: string) => {
+    if (!status) return;
+    if (window.socket && msg != '') {
+      setMessage(prevMessages =>
+        prevMessages.concat([
+          {
+            bot: false,
+            value: {
+              t: 'Text',
+              d: msg
+            },
+            createAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
+          }
+        ])
+      );
+      window.socket.send(
+        JSON.stringify({
+          t: 'send_private_message',
+          d: {
+            UserName: User.UserName,
+            UserId: User.UserId,
+            OpenID: User.OpenId,
+            MessageId: Date.now(),
+            MessageText: msg
+          }
+        })
+      );
+    }
   };
 
-  const onClickConnect = () => {
-    const socket = update();
-    // 设置 socket 状态
-    setSocket(socket);
-  };
-
-  const onClickclose = () => {
-    setSocket(null);
-    socket && socket.close();
-  };
-
-  useEffect(() => {
-    // 清理函数，关闭 WebSocket 连接
-    return () => {
-      socket && socket.close();
-    };
-  }, []);
+  //
 
   const MessageWindowRef = useRef<HTMLElement>(null);
-
   // 变动时自动清理
   useEffect(() => {
     // 清空
     setValue('');
-    // save
-
     if (MessageWindowRef.current) {
       // 滚动到底部
       MessageWindowRef.current.scrollTo(
@@ -127,118 +121,98 @@ export default function App() {
     }
   }, [message]);
 
-  /**
-   *
-   * @param msg
-   */
-  const sendMessage = (msg: string) => {
-    if (status == 'close') return;
-    if (socket && msg != '') {
-      setMessage(prevMessages =>
-        prevMessages.concat([
-          {
-            bot: false,
-            value: {
-              t: 'text',
-              d: msg
-            },
-            createAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
-          }
-        ])
-      );
-      socket.send(
-        JSON.stringify({
-          t: 'send_message',
-          d: {
-            ...event,
-            MsgBody: [
-              {
-                t: 'text',
-                d: msg
-              }
-            ]
-          }
-        })
-      );
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if ((event.metaKey || event.metaKey) && event.key === 'Enter') {
+      event.preventDefault(); // 防止表单提交
+      setValue(value + '\n'); // 在当前文本后添加换行符
+    } else if (event.key === 'Enter') {
+      sendMessage(value);
     }
   };
 
   return (
-    <section className="relative h-full flex flex-col shadow-content ">
-      <div className="flex flex-row justify-between w-full  overflow-hidden border-b border-opacity-70">
-        <div className="flex flex-row gap-3 px-2 py-1  cursor-pointer ">
+    <section className="relative h-full flex flex-col shadow-content">
+      <section className="select-none flex flex-row justify-between w-full overflow-hidden border-b border-[var(--vscode-sidebar-border)] border-opacity-70">
+        <div className="flex flex-row gap-3 px-2 py-1 cursor-pointer">
           <div className="flex items-center">
             <img
-              className="w-10 h-10 rounded-full "
-              src={USER_URI}
+              className="w-10 h-10 rounded-full"
+              src={BOT_URI}
               alt="Avatar"
             />
           </div>
           <div className="flex flex-col justify-center">
-            <div className="font-semibold">柠檬冲水</div>
-            <div className="text-sm text-gray-500">2024-12-25</div>
+            <div className="font-semibold text-[var(--vscode-activityBar-activeBackground)]">
+              {User.UserName}
+            </div>
+            <div className="text-sm text-[var(--vscode-text-selection-foreground)]">
+              测试用户
+            </div>
           </div>
         </div>
-        {
-          // 切换下一个用户
-        }
-        <div className="flex-row cursor-pointer flex items-center px-4 hover:bg-gray-100">
+
+        {/* 切换下一个用户 */}
+        <div className="flex-row cursor-pointer flex items-center px-4 hover:bg-[var(--vscode-activityBar-background)]">
           <Shuffle />
         </div>
-      </div>
-      <div className="flex-1 flex flex-col ">
+      </section>
+
+      <div className="flex-1 flex flex-col">
         <section
           ref={MessageWindowRef}
-          className="flex-1 px-3 py-2 overflow-y-auto flex gap-1 flex-col webkit bg-opacity-50 "
+          className="flex-1 px-3 py-2 overflow-y-auto flex gap-1 flex-col "
         >
           {message.map((item, index) => (
-            <div key={index} className="flex gap-4 bg-opacity-70 mr-auto">
+            <div
+              key={index}
+              className={`flex gap-4  ${
+                !item.bot ? 'ml-auto flex-row-reverse' : 'mr-auto'
+              }`}
+            >
               <img
-                className="w-12 h-12 rounded-full "
-                src={USER_URI}
+                className="w-12 h-12 rounded-full"
+                src={item.bot ? BOT_URI : USER_URI}
                 alt="Avatar"
               />
-              <div className="rounded-md relative p-2  shadow-sm ">
-                {item.value.t == 'text' &&
+              <div className="rounded-md relative p-2 shadow-md bg-[var(--vscode-panel-background)]">
+                {item.value.t === 'Text' &&
                   item.value.d
                     .split('\n')
                     .map((line: string, index: number) => (
-                      <Fragment key={index}>
-                        {line}
-                        {index < item.value.d.split('\n').length - 1 && <br />}
-                      </Fragment>
+                      <Fragment key={index}>{line}</Fragment>
                     ))}
-                {item.value.t == 'image' && (
+                {item.value.t === 'Image' && (
                   <img
-                    className="max-w-[20rem] xl:max-w-[25rem] rounded-md  "
+                    className="max-w-[15rem] xl:max-w-[20rem] rounded-md"
                     src={
-                      /^\/file/.test(item.value.d)
-                        ? `http://${config.host}:${config.port}${item.value.d}`
-                        : item.value.d
+                      /^\/file/.test(item.value.d?.url_index ?? '')
+                        ? `http://${config.host}:${config.port}${item.value.d.url_index}`
+                        : item.value.d?.url_data
                     }
                     alt="Image"
                   />
                 )}
-                <span className="absolute bottom-0 right-0 text-[0.5rem] text-gray-500">
+                <span className="absolute bottom-0 right-0  whitespace-nowrap text-[0.5rem] text-[var(--vscode-text-selection-foreground)]">
                   {item.createAt}
                 </span>
               </div>
             </div>
           ))}
         </section>
-        <section className="w-full flex flex-row justify-center p-2 ">
-          <div className="flex gap-2 flex-col border border-opacity-70 shadow-inner rounded-md w-full p-2">
-            <input
-              type="text"
-              className="min-h-10 outline-none bg-opacity-0 px-3 rounded-md"
+
+        {/* 输入框和发送按钮 */}
+        <section className="select-none w-full flex flex-row justify-center p-4">
+          <div className="flex gap-2 flex-col border border-[var(--vscode-sidebar-border)] bg-[var(--vscode-editor-background)] border-opacity-70 shadow-inner rounded-md w-full p-2">
+            <textarea
+              className="min-h-20 max-h-64  border-0 focus:border-0 bg-opacity-0 bg-[var(--vscode-editor-background)] p-2 rounded-md text-[var(--vscode-activityBar-activeBackground)]"
               value={value}
               onChange={e => setValue(e.target.value)}
               placeholder="输入内容..."
-              onKeyDown={event => event.key === 'Enter' && sendMessage(value)}
+              onKeyDown={handleKeyDown}
             />
             <div className="flex flex-row justify-end">
               <div
-                className="border border-opacity-70 mx-2 px-3 cursor-pointer rounded-md flex items-center justify-center hover:bg-gray-100 "
+                className="border border-[var(--vscode-sidebar-border)] border-opacity-70  px-3 cursor-pointer rounded-md flex items-center justify-center hover:bg-[var(--vscode-button-background)]"
                 onClick={() => sendMessage(value)}
               >
                 <SendIcon />
