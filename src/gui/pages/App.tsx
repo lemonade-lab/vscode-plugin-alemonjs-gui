@@ -9,11 +9,11 @@ export default function App() {
   >('group');
   return (
     <section className="relative h-full flex flex-col shadow-content ">
-      <div className="flex flex-row gap-2 py-1 px-2">
+      <div className="flex flex-row gap-2 py-1 px-2 border">
         <div
           className={classNames(
-            'px-3 py-2 cursor-pointer',
-            tag === 'group' && 'bg-gray-100'
+            'px-2 flex items-center cursor-pointer rounded-md py-1',
+            tag === 'group' && 'bg-gray-100 bg-opacity-70'
           )}
           onClick={() => setTag('group')}
         >
@@ -21,8 +21,8 @@ export default function App() {
         </div>
         <div
           className={classNames(
-            'px-3 py-2 cursor-pointer',
-            tag === 'private' && 'bg-gray-100'
+            'px-2 flex items-center cursor-pointer rounded-md py-1',
+            tag === 'private' && 'bg-gray-100 bg-opacity-70'
           )}
           onClick={() => setTag('private')}
         >
@@ -30,8 +30,8 @@ export default function App() {
         </div>
         <div
           className={classNames(
-            'px-3 py-2 cursor-pointer',
-            tag === 'config' && 'bg-gray-100'
+            'px-2 flex items-center cursor-pointer rounded-md py-1',
+            tag === 'config' && 'bg-gray-100 bg-opacity-70'
           )}
           onClick={() => setTag('config')}
         >

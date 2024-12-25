@@ -168,7 +168,7 @@ export default function App() {
   };
 
   return (
-    <section className="relative h-full flex flex-col shadow-content border 00">
+    <section className="relative h-full flex flex-col shadow-content ">
       <div className="flex-1 flex flex-col shadow-md">
         <section
           ref={MessageWindowRef}
@@ -209,20 +209,24 @@ export default function App() {
             </div>
           ))}
         </section>
-        <section className="w-full flex flex-row justify-center p-2 border ">
-          <input
-            type="text"
-            className="rounded-md w-full h-10 px-3 outline-none shadow-inner border "
-            value={value}
-            onChange={e => setValue(e.target.value)}
-            placeholder="输入内容..."
-            onKeyDown={event => event.key === 'Enter' && sendMessage(value)}
-          />
-          <div
-            className="shadow mx-2 px-3 cursor-pointer rounded-md flex items-center justify-center bg-blue-500 text-white hover:bg-blue-600"
-            onClick={() => sendMessage(value)}
-          >
-            <SendIcon />
+        <section className="w-full flex flex-row justify-center p-2 ">
+          <div className="flex gap-2 flex-col border shadow-inner rounded-md w-full p-2">
+            <input
+              type="text"
+              className="min-h-10 outline-none bg-opacity-0 px-3 rounded-md"
+              value={value}
+              onChange={e => setValue(e.target.value)}
+              placeholder="输入内容..."
+              onKeyDown={event => event.key === 'Enter' && sendMessage(value)}
+            />
+            <div className="flex flex-row justify-end">
+              <div
+                className="border mx-2 px-3 cursor-pointer rounded-md flex items-center justify-center hover:bg-gray-100 "
+                onClick={() => sendMessage(value)}
+              >
+                <SendIcon />
+              </div>
+            </div>
           </div>
         </section>
       </div>

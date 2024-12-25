@@ -169,8 +169,8 @@ export default function App() {
 
   return (
     <section className="relative h-full flex flex-col shadow-content ">
-      <div className="flex flex-row justify-between  border w-full  overflow-hidden">
-        <div className="flex flex-row gap-3 px-2 py-1 hover:bg-gray-100 cursor-pointer ">
+      <div className="flex flex-row justify-between w-full  overflow-hidden border-b">
+        <div className="flex flex-row gap-3 px-2 py-1  cursor-pointer ">
           <div className="flex items-center">
             <img
               className="w-10 h-10 rounded-full "
@@ -180,13 +180,13 @@ export default function App() {
           </div>
           <div className="flex flex-col justify-center">
             <div className="font-semibold">柠檬冲水</div>
-            <div className="text-sm text-gray-500">xxxxxxxx</div>
+            <div className="text-sm text-gray-500">2024-12-25</div>
           </div>
         </div>
         {
           // 切换下一个用户
         }
-        <div className="flex flex-row gap-3 px-2 py-1 hover:bg-gray-100 cursor-pointer ">
+        <div className="flex-row cursor-pointer flex items-center px-4 hover:bg-gray-100">
           ...
         </div>
       </div>
@@ -230,20 +230,24 @@ export default function App() {
             </div>
           ))}
         </section>
-        <section className="w-full flex flex-row justify-center p-2 border ">
-          <input
-            type="text"
-            className="rounded-md w-full h-10 px-3 outline-none shadow-inner border "
-            value={value}
-            onChange={e => setValue(e.target.value)}
-            placeholder="输入内容..."
-            onKeyDown={event => event.key === 'Enter' && sendMessage(value)}
-          />
-          <div
-            className="shadow mx-2 px-3 cursor-pointer rounded-md flex items-center justify-center bg-blue-500 text-white hover:bg-blue-600"
-            onClick={() => sendMessage(value)}
-          >
-            <SendIcon />
+        <section className="w-full flex flex-row justify-center p-2 ">
+          <div className="flex gap-2 flex-col border shadow-inner rounded-md w-full p-2">
+            <input
+              type="text"
+              className="min-h-10 outline-none bg-opacity-0 px-3 rounded-md"
+              value={value}
+              onChange={e => setValue(e.target.value)}
+              placeholder="输入内容..."
+              onKeyDown={event => event.key === 'Enter' && sendMessage(value)}
+            />
+            <div className="flex flex-row justify-end">
+              <div
+                className="border mx-2 px-3 cursor-pointer rounded-md flex items-center justify-center hover:bg-gray-100 "
+                onClick={() => sendMessage(value)}
+              >
+                <SendIcon />
+              </div>
+            </div>
           </div>
         </section>
       </div>
