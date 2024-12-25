@@ -19,7 +19,7 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.StatusBarAlignment.Right,
     100
   );
-  openChatWindowButton.text = '$(comment-discussion) AlemonJS';
+  openChatWindowButton.text = '$(comment-discussion) A';
   openChatWindowButton.command = 'alemonjs.openChatSidebar';
   openChatWindowButton.show();
   context.subscriptions.push(openChatWindowButton);

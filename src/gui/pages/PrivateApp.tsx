@@ -1,36 +1,28 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { SendIcon, Shuffle } from '@/gui/Icons';
 import dayjs from 'dayjs';
-import { BOT_URI, config, USER_URI } from '../config';
+import { DataImage, DataText, Data } from '../typing';
 
-type Text = {
-  t: 'Text';
-  d: string;
-};
-
-type Image = {
-  t: 'Image';
-  d: {
-    url_data?: string;
-    url_index?: string;
+export default function App({
+  status,
+  config,
+  Data
+}: {
+  status: boolean;
+  config: {
+    host: string;
+    port: string;
   };
-};
-
-export default function App({ status }: { status: boolean }) {
+  Data: Data;
+}) {
   const [value, setValue] = useState('');
   const [message, setMessage] = useState<
     {
       bot: boolean;
-      value: Image | Text;
+      value: DataText | DataImage;
       createAt: string;
     }[]
   >([]);
-
-  const User = {
-    UserId: '1715713638',
-    UserName: '柠檬冲水',
-    OpenId: '1715713638'
-  };
 
   useEffect(() => {
     if (!window.socket) {
@@ -94,9 +86,9 @@ export default function App({ status }: { status: boolean }) {
         JSON.stringify({
           t: 'send_private_message',
           d: {
-            UserName: User.UserName,
-            UserId: User.UserId,
-            OpenID: User.OpenId,
+            UserName: Data.UserName,
+            UserId: Data.UserId,
+            OpenID: Data.OpenId,
             MessageId: Date.now(),
             MessageText: msg
           }
@@ -137,13 +129,13 @@ export default function App({ status }: { status: boolean }) {
           <div className="flex items-center">
             <img
               className="w-10 h-10 rounded-full"
-              src={BOT_URI}
+              src={Data.ChannelAvatar}
               alt="Avatar"
             />
           </div>
           <div className="flex flex-col justify-center">
             <div className="font-semibold text-[var(--vscode-activityBar-activeBackground)]">
-              {User.UserName}
+              {Data.UserName}
             </div>
             <div className="text-sm text-[var(--vscode-text-selection-foreground)]">
               测试用户
@@ -171,7 +163,7 @@ export default function App({ status }: { status: boolean }) {
             >
               <img
                 className="w-12 h-12 rounded-full"
-                src={item.bot ? BOT_URI : USER_URI}
+                src={item.bot ? Data.BotAvatar : Data.UserAvatar}
                 alt="Avatar"
               />
               <div className="rounded-md relative p-2 shadow-md bg-[var(--vscode-panel-background)]">

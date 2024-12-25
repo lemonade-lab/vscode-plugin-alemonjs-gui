@@ -3,16 +3,28 @@ import GroupApp from '@/gui/pages/GroupApp';
 import PrivateApp from '@/gui/pages/PrivateApp';
 import ConfigApp from '@/gui/pages/ConfigApp';
 import classNames from 'classnames';
-import { postMessage } from '../vscode';
+import { Data } from '../typing';
 
 export default function App() {
   const [status, setStatus] = useState<boolean>(false);
-
   const [tag, setTag] = useState<'group' | 'private' | 'config'>('config');
-
   const [config, setConfig] = useState({
     host: '',
     port: ''
+  });
+
+  const [data, setData] = useState<Data>({
+    BotId: '',
+    BotName: '',
+    BotAvatar: '',
+    UserId: '',
+    UserName: '',
+    OpenId: '',
+    UserAvatar: '',
+    GuildId: '',
+    ChannelId: '',
+    ChannelName: '',
+    ChannelAvatar: ''
   });
 
   useEffect(() => {
@@ -23,74 +35,116 @@ export default function App() {
       if (message.type === 'fs.readFile.config') {
         setConfig(message.payload);
       }
+      if (message.type === 'fs.readFile.message') {
+        setData(message.payload);
+      }
+      vscode.postMessage({
+        type: 'window.showInformationMessage',
+        payload: {
+          text: '配置加载成功'
+        }
+      });
     };
-
     // 请求得到配置
-    postMessage({
+    vscode.postMessage({
       type: 'fs.readFile.config'
     });
-
+    vscode.postMessage({
+      type: 'fs.readFile.message'
+    });
     window.addEventListener('message', handleResponse);
     return () => {
       window.removeEventListener('message', handleResponse);
     };
   }, []);
 
+  /**
+   *
+   */
   const onClickConnect = () => {
-    // 关闭之前的连接
-    if (window.socket) {
-      window.socket.close();
-      postMessage({
+    try {
+      // 关闭之前的连接
+      if (window.socket) {
+        window.socket.close();
+        vscode.postMessage({
+          type: 'window.showInformationMessage',
+          payload: {
+            text: '连接已关闭'
+          }
+        });
+      }
+      const socket = new WebSocket(`ws://${config.host}:${config.port}`);
+      // 监听连接打开事件
+      socket.onopen = () => {
+        console.log('连接已建立');
+        setStatus(true);
+        vscode.postMessage({
+          type: 'window.showInformationMessage',
+          payload: {
+            text: '连接已建立'
+          }
+        });
+      };
+      // 监听连接关闭事件
+      socket.onclose = () => {
+        setStatus(false);
+        console.log('连接已关闭');
+        vscode.postMessage({
+          type: 'window.showInformationMessage',
+          payload: {
+            text: '连接已关闭'
+          }
+        });
+      };
+      window.socket = socket;
+    } catch (e) {
+      console.log(e);
+      vscode.postMessage({
         type: 'window.showInformationMessage',
         payload: {
-          text: 'WebSocket 连接已关闭'
+          text: '连接错误, 请检查配置'
         }
       });
     }
-    const socket = new WebSocket(`ws://${config.host}:${config.port}`);
-    // 监听连接打开事件
-    socket.onopen = () => {
-      console.log('WebSocket 连接已建立');
-      setStatus(true);
-      postMessage({
-        type: 'window.showInformationMessage',
-        payload: {
-          text: 'WebSocket 连接已建立'
-        }
-      });
-    };
-    // 监听连接关闭事件
-    socket.onclose = () => {
-      setStatus(false);
-      console.log('WebSocket 连接已关闭');
-      postMessage({
-        type: 'window.showInformationMessage',
-        payload: {
-          text: 'WebSocket 连接已关闭'
-        }
-      });
-    };
-    window.socket = socket;
   };
 
+  /**
+   *
+   */
   const onClickConfigSave = () => {
-    // 保存。
-    postMessage({
+    vscode.postMessage({
       type: 'fs.writeFile.config',
       payload: config
     });
   };
 
+  const onClickMessageSave = () => {
+    vscode.postMessage({
+      type: 'fs.writeFile.message',
+      payload: data
+    });
+  };
+
+  /**
+   *
+   */
   const onClickDisconnect = () => {
     if (window.socket) {
       window.socket.close();
+      vscode.postMessage({
+        type: 'window.showInformationMessage',
+        payload: {
+          text: '连接断开'
+        }
+      });
+    } else {
+      vscode.postMessage({
+        type: 'window.showInformationMessage',
+        payload: {
+          text: '未连接'
+        }
+      });
     }
-    postMessage({
-      type: 'window.showInformationMessage',
-      payload: {
-        text: 'WebSocket 连接断开'
-      }
-    });
   };
 
   return (
@@ -147,12 +201,19 @@ export default function App() {
         {tag === 'config' && (
           <ConfigApp
             config={config}
+            Data={data}
+            setData={setData}
             setConfig={setConfig}
             onClickConfigSave={onClickConfigSave}
+            onClickMessageSave={onClickMessageSave}
           />
         )}
-        {tag === 'private' && <PrivateApp status={status} />}
-        {tag === 'group' && <GroupApp status={status} />}
+        {tag === 'private' && (
+          <PrivateApp Data={data} config={config} status={status} />
+        )}
+        {tag === 'group' && (
+          <GroupApp Data={data} config={config} status={status} />
+        )}
       </div>
     </section>
   );

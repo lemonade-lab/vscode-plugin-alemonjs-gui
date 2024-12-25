@@ -1,37 +1,26 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { SendIcon, Shuffle } from '@/gui/Icons';
 import dayjs from 'dayjs';
-import { BOT_URI, config, GUILD_URL, USER_URI } from '../config';
+import { DataImage, DataText, Data } from '../typing';
 
-type Text = {
-  t: 'Text';
-  d: string;
-};
-
-type Image = {
-  t: 'Image';
-  d: {
-    url_data?: string;
-    url_index?: string;
-  };
-};
-
-export default function App({ status }: { status: boolean }) {
+export default function App({
+  status,
+  config,
+  Data
+}: {
+  status: boolean;
+  config: { host: string; port: string };
+  Data: Data;
+}) {
   const [value, setValue] = useState('');
 
   const [message, setMessage] = useState<
     {
       bot: boolean;
-      value: Image | Text;
+      value: DataText | DataImage;
       createAt: string;
     }[]
   >([]);
-
-  const User = {
-    UserId: '1715713638',
-    UserName: '测试用户1',
-    OpenId: '1715713638'
-  };
 
   useEffect(() => {
     if (!window.socket) {
@@ -95,11 +84,11 @@ export default function App({ status }: { status: boolean }) {
         JSON.stringify({
           t: 'send_message',
           d: {
-            GuildId: '1715713638',
-            ChannelId: '1715713638',
-            UserName: User.UserName,
-            UserId: User.UserId,
-            OpenId: User.OpenId,
+            GuildId: Data.GuildId,
+            ChannelId: Data.ChannelId,
+            UserName: Data.UserName,
+            UserId: Data.UserId,
+            OpenId: Data.OpenId,
             MessageId: Date.now(),
             MessageText: msg
           }
@@ -140,13 +129,13 @@ export default function App({ status }: { status: boolean }) {
           <div className="flex items-center">
             <img
               className="w-10 h-10 rounded-full"
-              src={GUILD_URL}
+              src={Data.ChannelAvatar}
               alt="Avatar"
             />
           </div>
           <div className="flex flex-col justify-center">
             <div className="font-semibold text-[var(--vscode-activityBar-activeBackground)]">
-              机器人交流群
+              {Data.ChannelName}
             </div>
             <div className="text-sm text-[var(--vscode-text-selection-foreground)]">
               测试群
@@ -174,7 +163,7 @@ export default function App({ status }: { status: boolean }) {
             >
               <img
                 className="w-12 h-12 rounded-full"
-                src={item.bot ? BOT_URI : USER_URI}
+                src={item.bot ? Data.BotAvatar : Data.UserAvatar}
                 alt="Avatar"
               />
               <div className="rounded-md relative p-2 shadow-md bg-[var(--vscode-panel-background)]">

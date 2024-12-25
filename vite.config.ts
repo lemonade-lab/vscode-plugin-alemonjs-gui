@@ -27,21 +27,21 @@ export default defineConfig(({ mode }) => {
         }
       }
     },
-    esbuild: {
-      drop:
-        process.env.NODE_ENV === 'development' ? [] : ['console', 'debugger']
-    },
+    // esbuild: {
+    //   drop:
+    //     process.env.NODE_ENV === 'development' ? [] : ['console', 'debugger']
+    // },
     build: {
-      commonjsOptions: {
-        transformMixedEsModules: true
-      },
-      minify: 'terser',
-      terserOptions: {
-        compress: {
-          drop_console: true,
-          drop_debugger: true
-        }
-      },
+      // commonjsOptions: {
+      //   transformMixedEsModules: true
+      // },
+      // minify: 'terser',
+      // terserOptions: {
+      //   compress: {
+      //     drop_console: true,
+      //     drop_debugger: true
+      //   }
+      // },
       rollupOptions: {
         output: {
           dir: 'dist-gui',

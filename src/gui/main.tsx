@@ -11,6 +11,6 @@ interface VsCodeApi {
 }
 
 declare global {
-  function acquireVsCodeApi(): VsCodeApi;
   var socket: WebSocket;
+  var vscode: VsCodeApi;
 }
