@@ -92,7 +92,7 @@ export default function App({
 
           {/* 用户列表 */}
           <div className="md:flex-1 py-2 px-2">
-            <div className="flex flex-col gap-2  border-y  border-[var(--vscode-sidebar-border)]">
+            <div className="flex flex-col gap-2    border-[var(--vscode-sidebar-border)]">
               <div className="font-semibold">用户列表</div>
               {[
                 {
@@ -109,7 +109,7 @@ export default function App({
                 },
                 ...user
               ].map(item => (
-                <div className="flex flex-row justify-between">
+                <div className="flex flex-row justify-between border-y border-[var(--vscode-sidebar-border)]">
                   <div className="flex flex-row gap-3 px-2 py-1 cursor-pointer">
                     <div className="flex items-center">
                       <img
