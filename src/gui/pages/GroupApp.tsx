@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { SendIcon, Shuffle } from '@/gui/Icons';
+import { SendIcon, Shuffle } from '@/gui/ui/Icons';
 import dayjs from 'dayjs';
 import { DataImage, DataText, Data } from '../typing';
 
@@ -139,16 +139,26 @@ export default function App({
             />
           </div>
           <div className="flex flex-col justify-center">
-            <div className="font-semibold text-[var(--vscode-activityBar-activeBackground)]">
+            <div className="font-semibold text-[var(--vscode-textPreformat-foreground)]">
               {Data.ChannelName}
             </div>
-            <div className="text-sm text-[var(--vscode-text-selection-foreground)]">
+            <div className="text-sm text-[var(--vscode-textPreformat-background)]">
               测试群
             </div>
           </div>
         </div>
-        <div className="flex-row cursor-pointer flex items-center px-4 hover:bg-[var(--vscode-activityBar-background)]">
-          <Shuffle />
+        <div
+          onClick={() => {
+            vscode.postMessage({
+              type: 'window.showInformationMessage',
+              payload: {
+                text: '暂未开放'
+              }
+            });
+          }}
+          className="flex-row cursor-pointer flex items-center px-4 text-[var(--vscode-textPreformat-background)] hover:bg-[var(--vscode-activityBar-background)]"
+        >
+          <Shuffle className="text-[var(--vscode-textPreformat-background)]" />
         </div>
       </section>
       {
@@ -162,7 +172,7 @@ export default function App({
           {message.map((item, index) => (
             <div
               key={index}
-              className={`flex gap-4 ${
+              className={`flex gap-2 ${
                 !item.bot ? 'ml-auto flex-row-reverse' : 'mr-auto'
               }`}
             >
@@ -171,7 +181,7 @@ export default function App({
                 src={item.bot ? Data.BotAvatar : Data.UserAvatar}
                 alt="Avatar"
               />
-              <div className="rounded-md relative p-2 shadow-md bg-[var(--vscode-panel-background)]">
+              <div className="rounded-md relative p-3  shadow-md bg-[var(--vscode-panel-background)]">
                 {item.value.t === 'Text' &&
                   item.value.d
                     .split('\n')
@@ -191,7 +201,7 @@ export default function App({
                     alt="Image"
                   />
                 )}
-                <span className="absolute bottom-0 whitespace-nowrap right-0 text-[0.5rem] text-[var(--vscode-text-selection-foreground)]">
+                <span className="absolute bottom-0 whitespace-nowrap right-0 text-[0.5rem]">
                   {item.createAt}
                 </span>
               </div>
@@ -202,16 +212,18 @@ export default function App({
 
       {/* 输入框和发送按钮 */}
       <section className="select-none w-full flex flex-row justify-center p-4">
-        <div className="flex gap-2 flex-col border border-[var(--vscode-sidebar-border)] bg-[var(--vscode-editor-background)] border-opacity-70 shadow-inner rounded-md w-full p-2">
+        <div className="flex gap-2 flex-col border border-[var(--vscode-sidebar-border)]   focus-within:border-[var(--vscode-button-background)] bg-[var(--vscode-editor-background)] border-opacity-70 shadow-inner rounded-md w-full p-2">
           <textarea
-            className="min-h-20 max-h-64  border-0 focus:border-0 bg-opacity-0 bg-[var(--vscode-editor-background)] p-2 rounded-md text-[var(--vscode-activityBar-activeBackground)]"
+            className="min-h-20 max-h-64  border-0 focus:border-0 bg-opacity-0 bg-[var(--vscode-editor-background)] rounded-md "
             value={value}
             onChange={e => setValue(e.target.value)}
             placeholder="输入内容..."
             onKeyDown={handleKeyDown}
           />
           <div className="flex flex-row justify-between">
-            <div>Control+Enter 换行</div>
+            <div className="text-[var(--vscode-textPreformat-background)]">
+              Control+Enter 换行
+            </div>
             <div
               className="border border-[var(--vscode-sidebar-border)] border-opacity-70  px-3 cursor-pointer rounded-md flex items-center justify-center hover:bg-[var(--vscode-button-background)]"
               onClick={() => sendMessage(value)}

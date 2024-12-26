@@ -61,12 +61,6 @@ export default function App() {
       // 关闭之前的连接
       if (window.socket) {
         window.socket.close();
-        vscode.postMessage({
-          type: 'window.showInformationMessage',
-          payload: {
-            text: '连接已关闭'
-          }
-        });
       }
       const socket = new WebSocket(`ws://${config.host}:${config.port}`);
       // 监听连接打开事件
@@ -93,6 +87,7 @@ export default function App() {
       };
       window.socket = socket;
     } catch (e) {
+      setStatus(false);
       console.log(e);
       vscode.postMessage({
         type: 'window.showInformationMessage',
@@ -143,18 +138,18 @@ export default function App() {
   };
 
   return (
-    <section className="overflow-hidden flex flex-1 flex-col bg-[var(--vscode-sideBar-foreground)] text-[var(--vscode-activityBar-activeBackground)]">
+    <section className="overflow-hidden flex flex-1 flex-col bg-[var(--vscode-sideBar-foreground)] ">
       <div className="select-none flex flex-row justify-between gap-2 py-1 px-2 border-b border-opacity-70 border-[var(--vscode-sidebar-border)]">
         <div className="flex flex-1 flex-row gap-2">
           <button
             onClick={onClickConnect}
-            className="px-2 flex items-center cursor-pointer rounded-md py-1 hover:bg-[var(--vscode-activityBar-background)] "
+            className="px-2 flex items-center cursor-pointer rounded-md py-1 text-[var(--vscode-activityBar-activeBackground)] hover:bg-[var(--vscode-activityBar-background)] "
           >
             连接
           </button>
           <button
             onClick={onClickDisconnect}
-            className="px-2 flex items-center cursor-pointer rounded-md py-1 hover:bg-[var(--vscode-activityBar-background)] "
+            className="px-2 flex items-center cursor-pointer rounded-md py-1 text-[var(--vscode-activityBar-activeBackground)] hover:bg-[var(--vscode-activityBar-background)] "
           >
             断开
           </button>
@@ -192,7 +187,7 @@ export default function App() {
           </div>
         </div>
       </div>
-      <div className="flex-1 flex flex-col overflow-hidden bg-[var(--vscode-sideBar-foreground)]">
+      <div className="flex-1 flex flex-col overflow-hidden ">
         {tag === 'config' && (
           <ConfigApp
             config={config}

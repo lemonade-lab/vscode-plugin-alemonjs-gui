@@ -3,7 +3,7 @@
   "displayName": "ALemonJS GUI",
   "publisher": "lemonade-x",
   "description": "阿柠檬机器人可视化界面",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "engines": {
     "vscode": "^1.96.0"
   },
@@ -26,8 +26,8 @@
       "activitybar": [
         {
           "id": "alemonjs",
-          "title": "AlemonJS GUI",
-          "icon": "resources/icons/24x24.png"
+          "title": "AlemonJS",
+          "icon": "$(comment-discussion)"
         }
       ]
     },

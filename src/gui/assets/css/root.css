@@ -1,8 +1,13 @@
 :root {
-    /* 编辑器背景颜色 */
-    --editor-background: #002b36;
-    /* Solarized Dark 背景色 */
-    /* 侧边栏背景颜色 */
-    --sidebar-background: #073642;
-    /* Solarized 深绿色背景色用于侧边栏 */
+    --vscode-test-background: #007acc;
+    /* --sidebar-border: var(--vscode-sidebar-border);
+    --activityBar-activeBackground: var(--vscode-activityBar-activeBackground);
+    --textPreformat-background: var(--vscode-textPreformat-background);
+    --textPreformat-foreground: var(--vscode-textPreformat-foreground);
+    --panel-background: var(--vscode-panel-background);
+    --editor-background: var(--vscode-editor-background);
+    --button-background: var(--vscode-button-background);
+    --activityBar-background: var(--vscode-activityBar-background);
+    --sideBar-foreground: var(--vscode-sideBar-foreground); */
+    /** 重新规定一份，用来调整颜色 */
 }

@@ -1,5 +1,7 @@
 # AlemonJS GUI
 
+开发文档[https://alemonjs.com/](https://alemonjs.com/)
+
 这是一个可以在vscode中使用gui平台进行测试的插件。
 
 新增alemon.config.yaml文件并配置。

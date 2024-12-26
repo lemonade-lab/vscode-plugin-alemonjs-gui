@@ -30,14 +30,14 @@ export default function App({
               type="text"
               value={config.host}
               onChange={e => setConfig({ ...config, host: e.target.value })}
-              className="min-w-0  bg-opacity-0 px-3 py-1 bg-[var(--vscode-editor-background)] rounded-md border border-[var(--vscode-sidebar-border)] focus:border-[var(--vscode-button-background)]"
+              className="min-w-0  bg-opacity-0 px-3 py-1 rounded-md border bg-[var(--vscode-editor-background)]  border-[var(--vscode-sidebar-border)] focus:border-[var(--vscode-button-background)]"
               placeholder="host"
             />
             <input
               type="text"
               value={config.port}
               onChange={e => setConfig({ ...config, port: e.target.value })}
-              className="min-w-0  bg-opacity-0 px-3 py-1 bg-[var(--vscode-editor-background)] rounded-md border border-[var(--vscode-sidebar-border)] focus:border-[var(--vscode-button-background)]"
+              className="min-w-0  bg-opacity-0 px-3 py-1 rounded-md border bg-[var(--vscode-editor-background)]  border-[var(--vscode-sidebar-border)] focus:border-[var(--vscode-button-background)]"
               placeholder="port"
             />
             <button
@@ -54,21 +54,21 @@ export default function App({
               type="text"
               value={Data.GuildId}
               onChange={e => setData({ ...Data, GuildId: e.target.value })}
-              className="min-w-0  bg-opacity-0 px-3 py-1 bg-[var(--vscode-editor-background)] rounded-md border border-[var(--vscode-sidebar-border)] focus:border-[var(--vscode-button-background)]"
+              className="min-w-0  bg-opacity-0 px-3 py-1 rounded-md border bg-[var(--vscode-editor-background)]  border-[var(--vscode-sidebar-border)] focus:border-[var(--vscode-button-background)]"
               placeholder="频道编号"
             />
             <input
               type="text"
               value={Data.ChannelId}
               onChange={e => setData({ ...Data, ChannelId: e.target.value })}
-              className="min-w-0  bg-opacity-0 px-3 py-1 bg-[var(--vscode-editor-background)] rounded-md border border-[var(--vscode-sidebar-border)] focus:border-[var(--vscode-button-background)]"
+              className="min-w-0  bg-opacity-0 px-3 py-1 rounded-md border bg-[var(--vscode-editor-background)]  border-[var(--vscode-sidebar-border)] focus:border-[var(--vscode-button-background)]"
               placeholder="子频道编号"
             />
             <input
               type="text"
               value={Data.ChannelName}
               onChange={e => setData({ ...Data, ChannelName: e.target.value })}
-              className="min-w-0  bg-opacity-0 px-3 py-1 bg-[var(--vscode-editor-background)] rounded-md border border-[var(--vscode-sidebar-border)] focus:border-[var(--vscode-button-background)]"
+              className="min-w-0  bg-opacity-0 px-3 py-1 rounded-md border bg-[var(--vscode-editor-background)]  border-[var(--vscode-sidebar-border)] focus:border-[var(--vscode-button-background)]"
               placeholder="子频道昵称"
             />
             <input
@@ -77,7 +77,7 @@ export default function App({
               onChange={e =>
                 setData({ ...Data, ChannelAvatar: e.target.value })
               }
-              className="min-w-0  bg-opacity-0 px-3 py-1 bg-[var(--vscode-editor-background)] rounded-md border border-[var(--vscode-sidebar-border)] focus:border-[var(--vscode-button-background)]"
+              className="min-w-0  bg-opacity-0 px-3 py-1 rounded-md border bg-[var(--vscode-editor-background)]  border-[var(--vscode-sidebar-border)] focus:border-[var(--vscode-button-background)]"
               placeholder="子频道头像"
             />
             <button
@@ -101,10 +101,10 @@ export default function App({
                   />
                 </div>
                 <div className="flex flex-col justify-center">
-                  <div className="font-semibold text-[var(--vscode-activityBar-activeBackground)]">
+                  <div className="font-semibold text-[var(--vscode-textPreformat-foreground)]">
                     {Data.UserName}
                   </div>
-                  <div className="text-sm text-[var(--vscode-text-selection-foreground)]">
+                  <div className="text-sm text-[var(--vscode-textPreformat-background)]">
                     测试用户
                   </div>
                 </div>
@@ -141,28 +141,28 @@ export default function App({
               type="text"
               value={Data.UserId}
               onChange={e => setData({ ...Data, UserId: e.target.value })}
-              className="min-w-0  bg-opacity-0 px-3 py-1 bg-[var(--vscode-editor-background)] rounded-md border border-[var(--vscode-sidebar-border)] focus:border-[var(--vscode-button-background)]"
+              className="min-w-0  bg-opacity-0 px-3 py-1 rounded-md border bg-[var(--vscode-editor-background)]  border-[var(--vscode-sidebar-border)] focus:border-[var(--vscode-button-background)]"
               placeholder="用户编号"
             />
             <input
               type="text"
               value={Data.UserName}
               onChange={e => setData({ ...Data, UserName: e.target.value })}
-              className="min-w-0  bg-opacity-0 px-3 py-1 bg-[var(--vscode-editor-background)] rounded-md border border-[var(--vscode-sidebar-border)] focus:border-[var(--vscode-button-background)]"
+              className="min-w-0  bg-opacity-0 px-3 py-1 rounded-md border bg-[var(--vscode-editor-background)]  border-[var(--vscode-sidebar-border)] focus:border-[var(--vscode-button-background)]"
               placeholder="用户昵称"
             />
             <input
               type="text"
               value={Data.UserAvatar}
               onChange={e => setData({ ...Data, UserAvatar: e.target.value })}
-              className="min-w-0  bg-opacity-0 px-3 py-1 bg-[var(--vscode-editor-background)] rounded-md border border-[var(--vscode-sidebar-border)] focus:border-[var(--vscode-button-background)]"
+              className="min-w-0  bg-opacity-0 px-3 py-1 rounded-md border bg-[var(--vscode-editor-background)]  border-[var(--vscode-sidebar-border)] focus:border-[var(--vscode-button-background)]"
               placeholder="用户头像"
             />
             <input
               type="text"
               value={Data.OpenId}
               onChange={e => setData({ ...Data, OpenId: e.target.value })}
-              className="min-w-0  bg-opacity-0 px-3 py-1 bg-[var(--vscode-editor-background)] rounded-md border border-[var(--vscode-sidebar-border)] focus:border-[var(--vscode-button-background)]"
+              className="min-w-0  bg-opacity-0 px-3 py-1 rounded-md border bg-[var(--vscode-editor-background)]  border-[var(--vscode-sidebar-border)] focus:border-[var(--vscode-button-background)]"
               placeholder="用户开放ID"
             />
             <button
