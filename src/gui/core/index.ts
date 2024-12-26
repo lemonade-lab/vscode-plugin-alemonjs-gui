@@ -12,9 +12,9 @@ export const parseHtmlContent = (input: string): string => {
 
 export const UserList = [
   { id: 1, UserId: 'everyone', UserName: '全体成员' },
-  { id: 2, UserId: '916415899', UserName: '测试成员1' },
-  { id: 3, UserId: '916415900', UserName: '测试成员2' },
-  { id: 3, UserId: '1715713638', UserName: '测试成员3' }
+  { id: 2, UserId: '916415899', UserName: '小柠檬' },
+  { id: 2, UserId: '794161769', UserName: '阿柠檬' },
+  { id: 3, UserId: '1715713638', UserName: '我自己' }
 ];
 
 /**

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Shuffle } from '@/gui/ui/Icons';
 import dayjs from 'dayjs';
-import { DataImage, DataText, Data } from '../typing';
+import { DataImage, DataText, Data, User } from '../typing';
 import MessageWondow from '../component/MessageWindow';
 import BotTextarea from '../component/BotTextarea';
 import { parseMessageContent, parseTextContent } from '../core';
@@ -9,11 +9,13 @@ import { parseMessageContent, parseTextContent } from '../core';
 export default function App({
   status,
   config,
-  Data
+  Data,
+  user
 }: {
   status: boolean;
   config: { host: string; port: string };
   Data: Data;
+  user: User[];
 }) {
   const [value, setValue] = useState('');
 
@@ -113,7 +115,7 @@ export default function App({
 
   return (
     <section className="flex-1 flex flex-col  overflow-auto ">
-      <section className="select-none flex flex-row justify-between w-full  border-b border-[var(--vscode-sidebar-border)] border-opacity-70">
+      <section className="select-none flex flex-row justify-between w-full   border-[var(--vscode-sidebar-border)] border-opacity-70">
         <div className="flex flex-row gap-3 px-2 py-1 cursor-pointer">
           <div className="flex items-center">
             <img
@@ -152,7 +154,21 @@ export default function App({
         value={value}
         onContentChange={val => setValue(val)}
         onClickSend={() => sendMessage(value)}
-        mention={true}
+        UserList={[
+          {
+            OpenId: 'everyone',
+            UserName: '全体成员',
+            UserId: 'everyone',
+            UserAvatar: ''
+          },
+          {
+            OpenId: Data.BotId,
+            UserId: Data.BotId,
+            UserName: Data.BotName,
+            UserAvatar: Data.BotAvatar
+          },
+          ...user
+        ]}
       />
     </section>
   );

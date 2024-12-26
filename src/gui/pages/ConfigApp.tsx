@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Data } from '../typing';
+import { Data, User } from '../typing';
 /**
  * @returns
  */
@@ -9,7 +9,8 @@ export default function App({
   onClickConfigSave,
   onClickMessageSave,
   Data,
-  setData
+  setData,
+  user
 }: {
   config: { host: string; port: string };
   setConfig: (config: { host: string; port: string }) => void;
@@ -17,6 +18,7 @@ export default function App({
   onClickMessageSave: () => void;
   Data: Data;
   setData: (data: Data) => void;
+  user: User[];
 }) {
   const [show, setShow] = useState(false);
   return (
@@ -24,7 +26,7 @@ export default function App({
       <section className=" h-full w-full flex-1 flex flex-col gap-2 py-2 select-none">
         <div className="flex flex-col sm:flex-row gap-2">
           {/* 连接配置 */}
-          <div className="md:flex-1 flex flex-col gap-2 py-2 border-y px-2 border-[var(--vscode-sidebar-border)]">
+          <div className="md:flex-1 flex flex-col gap-2 py-2  px-2 border-[var(--vscode-sidebar-border)]">
             <div className="font-semibold">连接配置</div>
             <input
               type="text"
@@ -48,7 +50,7 @@ export default function App({
             </button>
           </div>
 
-          <div className="md:flex-1 flex flex-col gap-2 py-2 border-y px-2 border-[var(--vscode-sidebar-border)]">
+          <div className="md:flex-1 flex flex-col gap-2 py-2  px-2 border-[var(--vscode-sidebar-border)]">
             <div className="font-semibold">频道配置</div>
             <input
               type="text"
@@ -89,53 +91,62 @@ export default function App({
           </div>
 
           {/* 用户列表 */}
-          <div className="md:flex-1 flex flex-col gap-2 py-2 border-y px-2 border-[var(--vscode-sidebar-border)]">
-            <div className="font-semibold">用户列表</div>
-            <div className="flex flex-row justify-between">
-              <div className="flex flex-row gap-3 px-2 py-1 cursor-pointer">
-                <div className="flex items-center">
-                  <img
-                    className="w-10 h-10 rounded-full"
-                    src={Data.UserAvatar}
-                    alt="Avatar"
-                  />
-                </div>
-                <div className="flex flex-col justify-center">
-                  <div className="font-semibold text-[var(--vscode-textPreformat-foreground)]">
-                    {Data.UserName}
+          <div className="md:flex-1 py-2 px-2">
+            <div className="flex flex-col gap-2  border-y  border-[var(--vscode-sidebar-border)]">
+              <div className="font-semibold">用户列表</div>
+              {[
+                {
+                  UserId: Data.BotId,
+                  UserName: Data.BotName,
+                  UserAvatar: Data.BotAvatar,
+                  DOCS: 'bot'
+                },
+                {
+                  UserId: Data.UserId,
+                  UserName: Data.UserName,
+                  UserAvatar: Data.UserAvatar,
+                  DOCS: 'myself'
+                },
+                ...user
+              ].map(item => (
+                <div className="flex flex-row justify-between">
+                  <div className="flex flex-row gap-3 px-2 py-1 cursor-pointer">
+                    <div className="flex items-center">
+                      <img
+                        className="w-10 h-10 rounded-full"
+                        src={item.UserAvatar}
+                        alt="Avatar"
+                      />
+                    </div>
+                    <div className="flex flex-col justify-center">
+                      <div className="font-semibold text-[var(--vscode-textPreformat-foreground)]">
+                        {item.UserName}
+                      </div>
+                      <div className="text-sm text-[var(--vscode-textPreformat-background)]">
+                        {item['DOCS'] ?? '测试用户'}
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-sm text-[var(--vscode-textPreformat-background)]">
-                    测试用户
+                  <div className="flex flex-row gap-2 items-center">
+                    {item['DOCS'] == 'myself' && (
+                      <>
+                        <button
+                          className="px-2 flex items-center cursor-pointer rounded-md py-1 hover:bg-[var(--vscode-activityBar-background)]"
+                          onClick={() => setShow(!show)}
+                        >
+                          编辑
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
-              </div>
-              <div className="flex flex-row gap-2 items-center">
-                <button
-                  className="px-2 flex items-center cursor-pointer rounded-md py-1 hover:bg-[var(--vscode-activityBar-background)]"
-                  onClick={() => setShow(!show)}
-                >
-                  编辑
-                </button>
-                <button
-                  onClick={() => {
-                    vscode.postMessage({
-                      type: 'window.showInformationMessage',
-                      payload: {
-                        text: '暂未开放'
-                      }
-                    });
-                  }}
-                  className="px-2 flex items-center cursor-pointer rounded-md py-1 hover:bg-[var(--vscode-activityBar-background)]"
-                >
-                  删除
-                </button>
-              </div>
+              ))}
             </div>
           </div>
         </div>
 
         {show && (
-          <div className="md:flex-1 flex flex-col gap-2 py-2 border-y px-2 border-[var(--vscode-sidebar-border)]">
+          <div className="md:flex-1 flex flex-col gap-2 py-2  px-2 border-[var(--vscode-sidebar-border)]">
             <div className="font-semibold">用户配置</div>
             <input
               type="text"

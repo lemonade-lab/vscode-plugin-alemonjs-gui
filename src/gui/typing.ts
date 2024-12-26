@@ -27,3 +27,10 @@ export type Data = {
   ChannelName: string;
   ChannelAvatar: string;
 };
+
+export type User = {
+  UserId: string;
+  UserName: string;
+  OpenId: string;
+  UserAvatar: string;
+};

@@ -3,7 +3,7 @@ import GroupApp from '@/gui/pages/GroupApp';
 import PrivateApp from '@/gui/pages/PrivateApp';
 import ConfigApp from '@/gui/pages/ConfigApp';
 import classNames from 'classnames';
-import { Data } from '../typing';
+import { Data, User } from '../typing';
 
 export default function App() {
   const [status, setStatus] = useState<boolean>(false);
@@ -12,6 +12,8 @@ export default function App() {
     host: '',
     port: ''
   });
+
+  const [user, setUser] = useState<User[]>([]);
 
   const [data, setData] = useState<Data>({
     BotId: '',
@@ -39,6 +41,9 @@ export default function App() {
       if (message.type === 'fs.readFile.message') {
         setData(message.payload);
       }
+      if (message.type === 'fs.readFile.users') {
+        setUser(message.payload);
+      }
     };
     // 请求得到配置
     vscode.postMessage({
@@ -47,6 +52,10 @@ export default function App() {
     vscode.postMessage({
       type: 'fs.readFile.message'
     });
+    vscode.postMessage({
+      type: 'fs.readFile.users'
+    });
+
     window.addEventListener('message', handleResponse);
     return () => {
       window.removeEventListener('message', handleResponse);
@@ -78,12 +87,6 @@ export default function App() {
       socket.onclose = () => {
         setStatus(false);
         console.log('连接已关闭');
-        vscode.postMessage({
-          type: 'window.showInformationMessage',
-          payload: {
-            text: '连接已关闭'
-          }
-        });
       };
       window.socket = socket;
     } catch (e) {
@@ -139,8 +142,8 @@ export default function App() {
 
   return (
     <section className="overflow-hidden flex flex-1 flex-col bg-[var(--vscode-sideBar-foreground)] ">
-      <div className="select-none flex flex-row justify-between gap-2 py-1 px-2 border-b border-opacity-70 border-[var(--vscode-sidebar-border)]">
-        <div className="flex flex-1 flex-row gap-2">
+      <div className="select-none flex flex-col xs:flex-row  justify-between gap-2 py-1 px-2 border-b border-opacity-70 border-[var(--vscode-sidebar-border)]">
+        <div className="flex flex-1   flex-row gap-2">
           <button
             onClick={onClickConnect}
             className="px-2 flex items-center cursor-pointer rounded-md py-1 text-[var(--vscode-activityBar-activeBackground)] hover:bg-[var(--vscode-activityBar-background)] "
@@ -196,13 +199,14 @@ export default function App() {
             setConfig={setConfig}
             onClickConfigSave={onClickConfigSave}
             onClickMessageSave={onClickMessageSave}
+            user={user}
           />
         )}
         {tag === 'private' && (
           <PrivateApp Data={data} config={config} status={status} />
         )}
         {tag === 'group' && (
-          <GroupApp Data={data} config={config} status={status} />
+          <GroupApp user={user} Data={data} config={config} status={status} />
         )}
       </div>
     </section>

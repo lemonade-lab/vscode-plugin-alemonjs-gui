@@ -1,19 +1,20 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { SendIcon } from '../ui/Icons';
-import { parseHtmlContent, UserList } from '../core';
+import { parseHtmlContent } from '../core';
+import { User } from '../typing';
 
 interface TextareaProps extends React.HTMLAttributes<HTMLDivElement> {
   value: string;
   onContentChange?: (content: string) => void;
   onClickSend: () => void;
-  mention?: boolean;
+  UserList?: User[];
 }
 
 const BotTextarea: React.FC<TextareaProps> = ({
   value,
   onContentChange,
   onClickSend,
-  mention,
+  UserList,
   ...props
 }) => {
   const editableDivRef = useRef<HTMLDivElement | null>(null);
@@ -32,7 +33,7 @@ const BotTextarea: React.FC<TextareaProps> = ({
       const rawText = editableDivRef.current.innerText;
       onContentChange?.(rawText);
 
-      if (mention) {
+      if (UserList && UserList.length > 1) {
         if (/@$/.test(rawText)) {
           setShowUserList(true);
         } else {
@@ -94,7 +95,7 @@ const BotTextarea: React.FC<TextareaProps> = ({
 
   return (
     <section className="select-none w-full flex flex-row justify-center p-4">
-      <div className="w-full flex flex-col gap-2 border border-[var(--vscode-sidebar-border)] focus-within:border-[var(--vscode-button-background)] bg-[var(--vscode-editor-background)] border-opacity-70 shadow-inner rounded-md p-2">
+      <div className="relative w-full flex flex-col gap-2 border border-[var(--vscode-sidebar-border)] focus-within:border-[var(--vscode-button-background)] bg-[var(--vscode-editor-background)] border-opacity-70 shadow-inner rounded-md p-2">
         <div
           contentEditable
           ref={editableDivRef}
@@ -102,19 +103,19 @@ const BotTextarea: React.FC<TextareaProps> = ({
           onKeyDown={handleKeyDown}
           onCompositionStart={handleCompositionStart}
           onCompositionEnd={handleCompositionEnd}
-          className="font-mono min-h-16 max-h-60 bg-[var(--vscode-editor-background)] relative border-0 rounded-lg overflow-auto"
+          className="font-mono min-h-16 max-h-60 bg-[var(--vscode-editor-background)]  border-0 rounded-lg overflow-auto"
           suppressContentEditableWarning
           {...props}
         ></div>
 
-        {showUserList && (
-          <div className="absolute bg-[var(--vscode-editor-background)] max-w-36 shadow-md border rounded-md w-full">
+        {showUserList && UserList && UserList.length > 1 && (
+          <div className="absolute  bottom-0 rounded-md w-full max-w-36 shadow-md border border-[var(--vscode-sidebar-border)]  bg-[var(--vscode-editor-background)] ">
             <div className="flex flex-col px-2 py-1">
               {UserList.map(user => (
                 <div
-                  key={user.id}
+                  key={user.UserId}
                   onClick={() => handleUserSelection(user.UserName)}
-                  className="rounded-md cursor-pointer  hover:bg-[var(--vscode-activityBar-background)]"
+                  className="rounded-md cursor-pointer p-1  hover:bg-[var(--vscode-activityBar-background)]"
                 >
                   {user.UserName}
                 </div>
@@ -123,7 +124,10 @@ const BotTextarea: React.FC<TextareaProps> = ({
           </div>
         )}
 
-        <div className="flex flex-row justify-between">
+        {
+          // TODO: mention
+        }
+        <div className="flex flex-row justify-between ">
           <div className="text-[var(--vscode-textPreformat-background)]">
             Control+Enter 换行
           </div>

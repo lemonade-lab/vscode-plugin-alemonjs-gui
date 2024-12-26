@@ -106,7 +106,7 @@ export default function App({
 
   return (
     <section className="flex-1 flex flex-col  overflow-auto">
-      <section className="select-none flex flex-row justify-between w-full  border-b border-[var(--vscode-sidebar-border)] border-opacity-70">
+      <section className="select-none flex flex-row justify-between w-full   border-[var(--vscode-sidebar-border)] border-opacity-70">
         <div className="flex flex-row gap-3 px-2 py-1 cursor-pointer">
           <div className="flex items-center">
             <img
@@ -120,7 +120,7 @@ export default function App({
               {Data.BotName}
             </div>
             <div className="text-sm text-[var(--vscode-textPreformat-background)]">
-              机器人
+              bot
             </div>
           </div>
         </div>
