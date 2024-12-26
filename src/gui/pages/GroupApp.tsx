@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import { DataImage, DataText, Data } from '../typing';
 import MessageWondow from '../component/MessageWindow';
 import BotTextarea from '../component/BotTextarea';
-import { parseMessageContent } from '../core';
+import { parseMessageContent, parseTextContent } from '../core';
 
 export default function App({
   status,
@@ -40,7 +40,10 @@ export default function App({
             prevMessages.concat([
               {
                 bot: true,
-                value: Text,
+                value: {
+                  t: 'Text',
+                  d: parseTextContent(Text.d)
+                },
                 createAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
               }
             ])
