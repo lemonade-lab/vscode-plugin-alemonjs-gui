@@ -138,9 +138,7 @@ export default function App({
           <Shuffle className="text-[var(--vscode-textPreformat-background)]" />
         </div>
       </section>
-
       <MessageWondow message={message} config={config} Data={Data} />
-
       <BotTextarea
         value={value}
         onContentChange={val => setValue(val)}

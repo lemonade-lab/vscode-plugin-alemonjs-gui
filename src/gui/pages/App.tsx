@@ -1,13 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import GroupApp from '@/gui/pages/GroupApp';
 import PrivateApp from '@/gui/pages/PrivateApp';
-import ConfigApp from '@/gui/pages/ConfigApp';
-import classNames from 'classnames';
 import { Data, User } from '../typing';
+import SettingApp from './Setting';
+import ConfigUser from './ConfigUser';
+import ConfigGuild from './ConfigGuild';
 
 export default function App() {
   const [status, setStatus] = useState<boolean>(false);
-  const [tag, setTag] = useState<'group' | 'private' | 'config'>('config');
+  const [tag, setTag] = useState<
+    'group' | 'private' | 'setting' | 'config.user' | 'config.guild'
+  >('group');
   const [config, setConfig] = useState({
     host: '',
     port: ''
@@ -15,9 +18,11 @@ export default function App() {
   // 保存定时任务。确保只有一个定时任务
   const timeRef = useRef<any>(null);
   const configRef = useRef<any>(null);
+  const countRef = useRef<number>(0);
 
   useEffect(() => {
     configRef.current = config;
+    countRef.current = 0;
   }, [config]);
 
   const [user, setUser] = useState<User[]>([]);
@@ -39,20 +44,25 @@ export default function App() {
   useEffect(() => {
     if (!window.vscode) return;
 
-    connect && connect();
-
     // 等待配置信息
     const handleResponse = (event: any) => {
-      console.log('handleResponse');
       const message = event.data;
       if (message.type === 'fs.readFile.config') {
         setConfig(message.payload);
-      }
-      if (message.type === 'fs.readFile.message') {
+      } else if (message.type === 'fs.readFile.message') {
         setData(message.payload);
-      }
-      if (message.type === 'fs.readFile.users') {
+      } else if (message.type === 'fs.readFile.users') {
         setUser(message.payload);
+      } else if (message.type == 'alemonjs.openSetting') {
+        setTag('setting');
+      } else if (message.type == 'alemonjs.openConfigUser') {
+        setTag('config.user');
+      } else if (message.type == 'alemonjs.openConfigGuild') {
+        setTag('config.guild');
+      } else if (message.type == 'alemonjs.openGroup') {
+        setTag('group');
+      } else if (message.type == 'alemonjs.openPrivate') {
+        setTag('private');
       }
     };
 
@@ -67,20 +77,21 @@ export default function App() {
       type: 'fs.readFile.users'
     });
 
+    setTimeout(() => {
+      connect && connect();
+    }, 300);
+
     window.addEventListener('message', handleResponse);
     return () => {
       window.removeEventListener('message', handleResponse);
     };
   }, []);
 
-  /**
-   *
-   */
   const connect = () => {
     try {
-      if (timeRef.current) {
-        clearTimeout(timeRef.current);
-      }
+      // 清除定时任务
+      if (timeRef.current) clearTimeout(timeRef.current);
+      // 如果已经连接，直接返回
       if (window.socket && window.socket.readyState === 1) return;
       // 创建socket
       const socket = new WebSocket(
@@ -90,30 +101,45 @@ export default function App() {
       socket.onopen = () => {
         console.log('连接已建立');
         setStatus(true);
+        countRef.current = 0;
       };
       // 监听连接关闭事件
       socket.onclose = () => {
         setStatus(false);
         console.log('连接已关闭');
-        // 连接关闭的时候，1s后重连
+        // 连接关闭的时候，1.7s后重连
+        let time = 1700;
+        if (countRef.current > 5) {
+          time = 2700;
+        } else if (countRef.current > 10) {
+          time = 3700;
+        } else if (countRef.current > 15) {
+          time = 4700;
+        } else if (countRef.current > 20) {
+          time = 5700;
+        }
         timeRef.current = setTimeout(() => {
           connect && connect();
-        }, 1700);
+          countRef.current = countRef.current + 1;
+        }, time);
       };
       window.socket = socket;
     } catch (e) {
       setStatus(false);
-      console.log(e);
-      // 连接错误的时候，3s后重连
+      // 连接错误的时候，3.7s后重连
+      let time = 3700;
+      if (countRef.current > 15) {
+        time = 4700;
+      } else if (countRef.current > 20) {
+        time = 5700;
+      }
       timeRef.current = setTimeout(() => {
         connect && connect();
-      }, 3700);
+        countRef.current = countRef.current + 1;
+      }, time);
     }
   };
 
-  /**
-   *
-   */
   const onClickConfigSave = () => {
     vscode.postMessage({
       type: 'fs.writeFile.config',
@@ -130,60 +156,35 @@ export default function App() {
 
   return (
     <section className="overflow-hidden flex flex-1 flex-col bg-[var(--vscode-sideBar-foreground)] ">
-      <div className="select-none flex flex-row  justify-between gap-2 py-1 px-2 border-b border-opacity-70 border-[var(--vscode-sidebar-border)]">
-        <div className="flex flex-1 flex-row gap-2"></div>
-        <div className="flex flex-row gap-2">
-          <div
-            className={classNames(
-              'px-2 flex items-center cursor-pointer rounded-md ',
-              tag === 'group' &&
-                'bg-[var(--vscode-activityBar-background)] text-[var(--vscode-activityBar-activeBackground)]'
-            )}
-            onClick={() => setTag('group')}
-          >
-            群聊
-          </div>
-          <div
-            className={classNames(
-              'px-2 flex items-center cursor-pointer rounded-md ',
-              tag === 'private' &&
-                'bg-[var(--vscode-activityBar-background)] text-[var(--vscode-activityBar-activeBackground)]'
-            )}
-            onClick={() => setTag('private')}
-          >
-            私聊
-          </div>
-          <div
-            className={classNames(
-              'px-2 flex items-center cursor-pointer rounded-md ',
-              tag === 'config' &&
-                'bg-[var(--vscode-activityBar-background)] text-[var(--vscode-activityBar-activeBackground)]'
-            )}
-            onClick={() => setTag('config')}
-          >
-            配置
-          </div>
-        </div>
-      </div>
-      <div className="flex-1 flex flex-col overflow-hidden ">
-        {tag === 'config' && (
-          <ConfigApp
-            config={config}
-            Data={data}
-            setData={setData}
-            setConfig={setConfig}
-            onClickConfigSave={onClickConfigSave}
-            onClickMessageSave={onClickMessageSave}
-            user={user}
-          />
-        )}
-        {tag === 'private' && (
-          <PrivateApp Data={data} config={config} status={status} />
-        )}
-        {tag === 'group' && (
-          <GroupApp user={user} Data={data} config={config} status={status} />
-        )}
-      </div>
+      {tag === 'config.user' && (
+        <ConfigUser
+          Data={data}
+          setData={setData}
+          onClickMessageSave={onClickMessageSave}
+          user={user}
+        />
+      )}
+      {tag === 'config.guild' && (
+        <ConfigGuild
+          Data={data}
+          setData={setData}
+          onClickMessageSave={onClickMessageSave}
+          user={user}
+        />
+      )}
+      {tag === 'private' && (
+        <PrivateApp Data={data} config={config} status={status} />
+      )}
+      {tag === 'group' && (
+        <GroupApp user={user} Data={data} config={config} status={status} />
+      )}
+      {tag === 'setting' && (
+        <SettingApp
+          config={config}
+          setConfig={setConfig}
+          onClickConfigSave={onClickConfigSave}
+        />
+      )}
     </section>
   );
 }
