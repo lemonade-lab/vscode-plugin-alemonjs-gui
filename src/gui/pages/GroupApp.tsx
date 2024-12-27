@@ -115,19 +115,19 @@ export default function App({
 
   return (
     <section className="flex-1 flex flex-col  overflow-auto ">
-      <section className="select-none flex flex-row justify-between w-full   border-[var(--vscode-sidebar-border)] border-opacity-70">
+      <section className="select-none flex flex-row justify-between w-full shadow-md">
         <div className="flex flex-row gap-3 px-2 py-1 cursor-pointer">
           <div className="flex items-center">
-            <img
-              className="w-10 h-10 rounded-full"
-              src={Data.ChannelAvatar}
-              alt="Avatar"
-            />
+            {Data.ChannelAvatar && Data.ChannelAvatar != '' && (
+              <img
+                className="w-10 h-10 rounded-full"
+                src={Data.ChannelAvatar}
+                alt="Avatar"
+              />
+            )}
           </div>
           <div className="flex flex-col justify-center">
-            <div className="font-semibold text-[var(--vscode-textPreformat-foreground)]">
-              {Data.ChannelName}
-            </div>
+            <div className="font-semibold ">{Data.ChannelName}</div>
             <div className="text-sm text-[var(--vscode-textPreformat-background)]">
               测试群
             </div>
@@ -144,7 +144,7 @@ export default function App({
           }}
           className="flex-row cursor-pointer flex items-center px-4  hover:bg-[var(--vscode-activityBar-background)]"
         >
-          <Shuffle className="text-[var(--vscode-textPreformat-background)]" />
+          <Shuffle />
         </div>
       </section>
       <MessageWondow message={message} config={config} Data={Data} />

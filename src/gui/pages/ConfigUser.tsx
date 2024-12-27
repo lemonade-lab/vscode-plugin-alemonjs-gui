@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Data, User } from '../typing';
+import { Button } from '@/gui/ui/Button';
+import { Input } from '@/gui/ui/Input';
 /**
  * @returns
  */
@@ -37,19 +39,19 @@ export default function ConfigUser({
               },
               ...user
             ].map(item => (
-              <div className="flex flex-row justify-between border-y border-[var(--vscode-sidebar-border)]">
+              <div className="flex flex-row justify-between border-y border-[var(--vscode-sidebar-border)] bg-[var(--vscode-editor-background)]">
                 <div className="flex flex-row gap-3 px-2 py-1 cursor-pointer">
                   <div className="flex items-center">
-                    <img
-                      className="w-10 h-10 rounded-full"
-                      src={item.UserAvatar}
-                      alt="Avatar"
-                    />
+                    {item.UserAvatar && item.UserAvatar != '' && (
+                      <img
+                        className="w-10 h-10 rounded-full"
+                        src={item.UserAvatar}
+                        alt="Avatar"
+                      />
+                    )}
                   </div>
                   <div className="flex flex-col justify-center">
-                    <div className="font-semibold text-[var(--vscode-textPreformat-foreground)]">
-                      {item.UserName}
-                    </div>
+                    <div className="font-semibold ">{item.UserName}</div>
                     <div className="text-sm text-[var(--vscode-textPreformat-background)]">
                       {item['DOCS'] ?? '测试用户'}
                     </div>
@@ -58,12 +60,7 @@ export default function ConfigUser({
                 <div className="flex flex-row gap-2 items-center">
                   {item['DOCS'] == 'myself' && (
                     <>
-                      <button
-                        className="px-2 flex items-center cursor-pointer rounded-md py-1 hover:bg-[var(--vscode-activityBar-background)]"
-                        onClick={() => setShow(!show)}
-                      >
-                        编辑
-                      </button>
+                      <Button onClick={() => setShow(!show)}>编辑</Button>
                     </>
                   )}
                 </div>
@@ -75,40 +72,31 @@ export default function ConfigUser({
         {show && (
           <div className="flex flex-col gap-2 py-2  px-2 border-[var(--vscode-sidebar-border)]">
             <div className="font-semibold">用户配置</div>
-            <input
+            <Input
               type="text"
               value={Data.UserId}
               onChange={e => setData({ ...Data, UserId: e.target.value })}
-              className="min-w-0  bg-opacity-0 px-3 py-1 rounded-md border bg-[var(--vscode-editor-background)]  border-[var(--vscode-sidebar-border)] focus:border-[var(--vscode-button-background)]"
               placeholder="用户编号"
             />
-            <input
+            <Input
               type="text"
               value={Data.UserName}
               onChange={e => setData({ ...Data, UserName: e.target.value })}
-              className="min-w-0  bg-opacity-0 px-3 py-1 rounded-md border bg-[var(--vscode-editor-background)]  border-[var(--vscode-sidebar-border)] focus:border-[var(--vscode-button-background)]"
               placeholder="用户昵称"
             />
-            <input
+            <Input
               type="text"
               value={Data.UserAvatar}
               onChange={e => setData({ ...Data, UserAvatar: e.target.value })}
-              className="min-w-0  bg-opacity-0 px-3 py-1 rounded-md border bg-[var(--vscode-editor-background)]  border-[var(--vscode-sidebar-border)] focus:border-[var(--vscode-button-background)]"
               placeholder="用户头像"
             />
-            <input
+            <Input
               type="text"
               value={Data.OpenId}
               onChange={e => setData({ ...Data, OpenId: e.target.value })}
-              className="min-w-0  bg-opacity-0 px-3 py-1 rounded-md border bg-[var(--vscode-editor-background)]  border-[var(--vscode-sidebar-border)] focus:border-[var(--vscode-button-background)]"
               placeholder="用户开放ID"
             />
-            <button
-              onClick={onClickMessageSave}
-              className="px-2 flex items-center cursor-pointer rounded-md justify-center  py-1 border border-[var(--vscode-sidebar-border)]  hover:bg-[var(--vscode-activityBar-background)]"
-            >
-              保存
-            </button>
+            <Button onClick={onClickMessageSave}>保存</Button>
           </div>
         )}
       </section>

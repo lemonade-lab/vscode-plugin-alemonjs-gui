@@ -1,24 +1,21 @@
 import classNames from 'classnames';
-export default function Button(
+export function Button(
   props: React.DetailedHTMLProps<
     React.ButtonHTMLAttributes<HTMLButtonElement>,
     HTMLButtonElement
-  > & {
-    typing?: 'error' | 'success' | 'warning' | 'no-border';
-  }
+  >
 ) {
-  const { typing = 'none', ...prop } = props;
   return (
     <button
       type="button"
-      className={classNames('text-sm  px-1 md:px-2 py-1 rounded', {
-        'text-white  bg-red-500': typing == 'error',
-        'text-white  bg-blue-500 ': typing == 'success',
-        'text-white  bg-yellow-500 ': typing == 'warning',
-        'text-slate-800 border  dark:bg-white ': typing == 'none',
-        '  bg-slate-100 dark:bg-slate-700 ': typing == 'no-border'
-      })}
-      {...prop}
+      className={classNames(
+        'px-2 py-1 rounded-md flex items-center justify-center ',
+        'bg-[var(--vscode-button-background)]',
+        'hover:bg-[var(--vscode-button-hoverBackground)]',
+        'border border-[var(--vscode-button-border)]',
+        'rounded-md'
+      )}
+      {...props}
     />
   );
 }

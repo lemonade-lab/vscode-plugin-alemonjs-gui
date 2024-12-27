@@ -155,7 +155,7 @@ export default function App() {
   };
 
   return (
-    <section className="overflow-hidden flex flex-1 flex-col bg-[var(--vscode-sideBar-foreground)] ">
+    <section className="overflow-hidden  flex flex-1 flex-col bg-[var(--vscode-sideBar-background)] ">
       {tag === 'config.user' && (
         <ConfigUser
           Data={data}
