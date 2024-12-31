@@ -82,7 +82,7 @@ export const resolveWebviewView = (
             jsonDir: 'dist/config.json',
             payload: {
               host: 'localhost',
-              port: '9601'
+              port: '17127'
             }
           });
           break;

@@ -103,7 +103,7 @@ const BotTextarea: React.FC<TextareaProps> = ({
   };
 
   return (
-    <section className=" select-none w-full flex flex-row justify-center p-4">
+    <section className=" select-none w-full flex flex-row justify-center px-4 py-1">
       <div className="w-full  flex flex-col gap-2 border border-[var(--vscode-sidebar-border)] focus-within:border-[var(--vscode-button-background)] bg-[var(--vscode-editor-background)] border-opacity-70 shadow-inner rounded-md p-2">
         <div
           contentEditable

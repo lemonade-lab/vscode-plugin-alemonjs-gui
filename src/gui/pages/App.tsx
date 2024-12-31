@@ -185,6 +185,9 @@ export default function App() {
           onClickConfigSave={onClickConfigSave}
         />
       )}
+      <header className="flex flex-row justify-between items-center px-4 select-none ">
+        ws://{config.host}:{config.port} {status ? 'connet' : 'close'}
+      </header>
     </section>
   );
 }

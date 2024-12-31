@@ -7,7 +7,7 @@ export default function Textarea(
 ) {
   const { onClickSend } = props;
   return (
-    <section className="select-none w-full flex flex-row justify-center p-4">
+    <section className="select-none w-full flex flex-row justify-center px-4 py-1">
       <div className="flex gap-2 flex-col border border-[var(--vscode-sidebar-border)] focus-within:border-[var(--vscode-button-background)] bg-[var(--vscode-editor-background)] border-opacity-70 shadow-inner rounded-md w-full p-2">
         <textarea
           className="min-h-20 max-h-64 border-0 focus:border-0 bg-opacity-0 pointer-events-none bg-[var(--vscode-editor-background)] rounded-md "
