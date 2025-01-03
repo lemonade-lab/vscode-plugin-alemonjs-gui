@@ -1,127 +1,122 @@
 import { useEffect, useState } from 'react';
 import { Shuffle } from '@/gui/ui/Icons';
-import dayjs from 'dayjs';
-import { DataImage, DataText, Data } from '../typing';
+import { Config, Data, DataPrivate, Message, PrivateMessage } from '../typing';
 import MessageWondow from '../component/MessageWindow';
+import { DATA, parseMessage } from '../core';
 import BotTextarea from '../component/BotTextarea';
-import { parseMessageContent } from '../core';
 
 export default function App({
   status,
-  config,
   Data
 }: {
   status: boolean;
-  config: {
-    host: string;
-    port: string;
-  };
-  Data: Data;
+  Data: Config;
 }) {
   const [value, setValue] = useState('');
-  const [message, setMessage] = useState<
-    {
-      bot: boolean;
-      value: DataText | DataImage;
-      createAt: string;
-    }[]
-  >([]);
+  const [message, setMessage] = useState<PrivateMessage[]>([]);
 
   useEffect(() => {
     if (!window.socket) return;
-    // 监听消息事件
-    window.socket.onmessage = db => {
-      const event = JSON.parse(db.data);
-      if (event.t == 'send_private_message') {
-        // 获取文本消息
-        const Text = event.d.find((item: any) => item.t == 'Text');
-        if (Text) {
-          // 使用函数式更新
-          setMessage(prevMessages =>
-            prevMessages.concat([
-              {
-                bot: true,
-                value: Text,
-                createAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
-              }
-            ])
-          );
+    if (status) {
+      // 监听消息事件
+      window.socket.onmessage = db => {
+        const event = DATA.parse(db.data);
+        console.log('t', event.t);
+        if (event.t == 'send_private_message') {
+          const d = event.d;
+          setMessage(message => [...message, d]);
+        } else if (event.t == 'post_private') {
+          const d = event.d;
+          setMessage(d.map(item => item.d));
         }
-        // 获取图片消息
-        const image = event.d.find((item: any) => item.t == 'Image');
-        if (image) {
-          setMessage(prevMessages =>
-            prevMessages.concat([
-              {
-                bot: true,
-                value: image,
-                createAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
-              }
-            ])
-          );
-        }
+      };
+      if (message.length == 0) {
+        const createAt = Date.now();
+        window.socket.send(
+          JSON.stringify({
+            t: 'get_private',
+            d: {
+              createAt
+            }
+          })
+        );
       }
+    } else {
+      // 清除监听
+      window.socket.onmessage = null;
+    }
+
+    return () => {
+      if (!window.socket) return;
+      window.socket.onmessage = null;
     };
-  });
+  }, [status]);
 
   /**
-   *
    * @param msg
    */
   const sendMessage = (msg: string) => {
     if (!status) return;
     if (window.socket && msg != '') {
-      // 使用函数式更新
-      setMessage(prevMessages =>
-        prevMessages.concat([
-          {
-            bot: false,
-            value: {
-              t: 'Text',
-              d: msg
-            },
-            createAt: dayjs().format('YYYY-MM-DD HH:mm:ss')
-          }
-        ])
-      );
-
+      // const MessageBody = parseMessage(msg);
+      const data: DataPrivate = {
+        t: 'send_private_message',
+        d: {
+          UserId: Data.UserId,
+          UserName: Data.UserName,
+          UserAvatar: Data.UserAvatar,
+          IsBot: false,
+          OpenId: Data.OpenId,
+          MessageId: Date.now(),
+          createAt: Date.now(),
+          MessageBody: [
+            {
+              type: 'Text',
+              value: msg
+            }
+          ]
+        }
+      };
+      // 消息
+      setMessage([...message, data.d]);
       // 清空
       setValue('');
-
-      // 发送消息
-      window.socket.send(
-        JSON.stringify({
-          t: 'send_private_message',
-          d: {
-            UserName: Data.UserName,
-            UserId: Data.UserId,
-            OpenID: Data.OpenId,
-            MessageId: Date.now(),
-            MessageText: parseMessageContent(msg)
-          }
-        })
-      );
+      window.socket.send(DATA.stringify(data));
     }
   };
 
+  const onClickDel = (item: Message) => {
+    if (!status) return;
+    const data: Data = {
+      t: 'del_private',
+      d: {
+        createAt: Date.now(),
+        MessageId: item.MessageId
+      }
+    };
+    window.socket.send(DATA.stringify(data));
+
+    const news = message.filter(i => i.MessageId != item.MessageId);
+    setMessage(news);
+  };
+
   return (
-    <section className="flex-1 flex flex-col  overflow-auto">
+    <section className="flex-1 flex flex-col  overflow-auto ">
       <section className="select-none flex flex-row justify-between w-full shadow-md">
-        {' '}
         <div className="flex flex-row gap-3 px-2 py-1 cursor-pointer">
           <div className="flex items-center">
-            {Data.BotAvatar && Data.BotAvatar != '' && (
+            {Data.ChannelAvatar && Data.ChannelAvatar != '' && (
               <img
                 className="w-10 h-10 rounded-full"
-                src={Data.BotAvatar}
+                src={Data.ChannelAvatar}
                 alt="Avatar"
               />
             )}
           </div>
           <div className="flex flex-col justify-center">
-            <div className="font-semibold ">{Data.BotName}</div>
+            <div className="font-semibold ">{Data.ChannelName}</div>
             <div className="text-sm text-[var(--vscode-textPreformat-background)]">
-              bot
+              测试群
             </div>
           </div>
         </div>
@@ -134,12 +129,12 @@ export default function App({
               }
             });
           }}
-          className="flex-row cursor-pointer flex items-center px-4 hover:bg-[var(--vscode-activityBar-background)]"
+          className="flex-row cursor-pointer flex items-center px-4  hover:bg-[var(--vscode-activityBar-background)]"
         >
           <Shuffle />
         </div>
       </section>
-      <MessageWondow message={message} config={config} Data={Data} />
+      <MessageWondow message={message} onClickDel={onClickDel} Data={Data} />
       <BotTextarea
         value={value}
         onContentChange={val => setValue(val)}

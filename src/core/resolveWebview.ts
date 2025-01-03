@@ -103,6 +103,7 @@ export const resolveWebviewView = (
               BotAvatar: 'https://q1.qlogo.cn/g?b=qq&s=0&nk=794161769',
               UserId: '1715713638',
               UserName: '柠檬冲水',
+              IsBot: false,
               OpenId: '120120120',
               UserAvatar: 'https://q1.qlogo.cn/g?b=qq&s=0&nk=1715713638',
               GuildId: '123123',

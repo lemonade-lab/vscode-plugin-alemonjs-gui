@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import GroupApp from '@/gui/pages/GroupApp';
 import PrivateApp from '@/gui/pages/PrivateApp';
-import { Data, User } from '../typing';
+import { Config, User } from '../typing';
 import SettingApp from './Setting';
 import ConfigUser from './ConfigUser';
 import ConfigGuild from './ConfigGuild';
@@ -11,10 +11,12 @@ export default function App() {
   const [tag, setTag] = useState<
     'group' | 'private' | 'setting' | 'config.user' | 'config.guild'
   >('group');
+
   const [config, setConfig] = useState({
     host: '',
     port: ''
   });
+
   // 保存定时任务。确保只有一个定时任务
   const timeRef = useRef<any>(null);
   const configRef = useRef<any>(null);
@@ -27,14 +29,15 @@ export default function App() {
 
   const [user, setUser] = useState<User[]>([]);
 
-  const [data, setData] = useState<Data>({
+  const [data, setData] = useState<Config>({
     BotId: '',
     BotName: '',
     BotAvatar: '',
     UserId: '',
     UserName: '',
-    OpenId: '',
     UserAvatar: '',
+    OpenId: '',
+    IsBot: false,
     GuildId: '',
     ChannelId: '',
     ChannelName: '',
@@ -172,12 +175,8 @@ export default function App() {
           user={user}
         />
       )}
-      {tag === 'private' && (
-        <PrivateApp Data={data} config={config} status={status} />
-      )}
-      {tag === 'group' && (
-        <GroupApp user={user} Data={data} config={config} status={status} />
-      )}
+      {tag === 'private' && <PrivateApp Data={data} status={status} />}
+      {tag === 'group' && <GroupApp user={user} Data={data} status={status} />}
       {tag === 'setting' && (
         <SettingApp
           config={config}

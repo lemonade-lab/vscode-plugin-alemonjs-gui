@@ -1,4 +1,4 @@
-import { Data, User } from '../typing';
+import { Config, User } from '../typing';
 import { Button } from '@/gui/ui/Button';
 import { Input } from '@/gui/ui/Input';
 /**
@@ -10,8 +10,8 @@ export default function ConfigGuild({
   setData
 }: {
   onClickMessageSave: () => void;
-  Data: Data;
-  setData: (data: Data) => void;
+  Data: Config;
+  setData: (data: Config) => void;
   user: User[];
 }) {
   return (
