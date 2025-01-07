@@ -73,7 +73,9 @@ export default function App({
 
     // 发送消息
     if (window.socket && msg != '') {
+      console.log('msg', msg);
       const MessageBody = parseMessage(msg);
+      console.log('MessageBody', MessageBody);
       const data: DataPublic = {
         t: 'send_message',
         d: {

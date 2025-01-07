@@ -3,7 +3,7 @@
   "displayName": "ALemonJS GUI",
   "publisher": "lemonade-x",
   "description": "阿柠檬机器人可视化界面",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "engines": {
     "vscode": "^1.96.0"
   },
@@ -99,6 +99,7 @@
   },
   "scripts": {
     "dev": "vite",
+    "bundle": "tsc && NODE_ENV='development' vite build",
     "build": "tsc && vite build",
     "eslint": "eslint . --fix",
     "preview": "vite preview",

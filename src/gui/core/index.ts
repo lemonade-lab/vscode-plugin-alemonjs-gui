@@ -43,52 +43,46 @@ export const parseMessageContent = (input: string): string => {
 
 export const parseMessage = (msg: string) => {
   const message = parseMessageContent(msg);
-  const mentionUserPattern = /<@(.*?)>/g; // 匹配用户提及
-  const mentionChannelPattern = /<#(.*?)>/g; // 匹配频道提及
+
   const bodies: Message['MessageBody'] = [];
-  let lastIndex = 0;
-  // 提取用户提及
-  let match;
-  while ((match = mentionUserPattern.exec(message)) !== null) {
-    // 添加普通文本部分
-    if (lastIndex < match.index) {
-      const textValue = message.substring(lastIndex, match.index).trim();
-      if (textValue) {
-        bodies.push({ type: 'Text', value: textValue });
+
+  const createMentions = (mentionPattern: RegExp) => {
+    let lastIndex = 0;
+    let match;
+
+    while ((match = mentionPattern.exec(message)) !== null) {
+      // 添加普通文本部分
+      if (lastIndex < match.index) {
+        const textValue = message.substring(lastIndex, match.index).trim();
+        if (textValue) {
+          bodies.push({ type: 'Text', value: textValue });
+        }
+      }
+
+      const value = match[1].trim();
+      const mentionType = match[0].startsWith('<@') ? 'user' : 'channel';
+
+      bodies.push({
+        type: 'Mention',
+        value: value,
+        options: {
+          belong: value === 'everyone' ? 'everyone' : mentionType
+        }
+      });
+
+      lastIndex = mentionPattern.lastIndex; // 更新索引
+    }
+
+    // 添加剩余文本
+    if (lastIndex < message.length) {
+      const remainingText = message.substring(lastIndex).trim();
+      if (remainingText) {
+        bodies.push({ type: 'Text', value: remainingText });
       }
     }
-    // 添加用户提及
-    const username = match[1].trim();
-    bodies.push({
-      type: 'Mention',
-      value: username,
-      options: { belong: 'user' }
-    });
-    lastIndex = mentionUserPattern.lastIndex; // 更新索引
-  }
-  // 添加剩余文本
-  if (lastIndex < message.length) {
-    const remainingText = message.substring(lastIndex).trim();
-    if (remainingText) {
-      bodies.push({ type: 'Text', value: remainingText });
-    }
-  }
-  // 处理频道提及（可选，根据你的需求）
-  lastIndex = 0; // 重置索引
-  while ((match = mentionChannelPattern.exec(message)) !== null) {
-    // 添加普通文本部分
-    if (lastIndex < match.index) {
-      const textValue = message.substring(lastIndex, match.index).trim();
-      if (textValue) {
-        bodies.push({ type: 'Text', value: textValue });
-      }
-    }
-    bodies.push({
-      type: 'Mention',
-      value: match[1].trim(),
-      options: { belong: 'channel' }
-    });
-    lastIndex = mentionChannelPattern.lastIndex; // 更新索引
-  }
+  };
+
+  createMentions(/<[@#](.*?)>/g);
+
   return bodies;
 };
