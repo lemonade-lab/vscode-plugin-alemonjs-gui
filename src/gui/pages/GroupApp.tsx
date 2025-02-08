@@ -9,8 +9,8 @@ import {
   User
 } from '../typing';
 import MessageWondow from '../component/MessageWindow';
-import BotTextarea from '../component/BotTextarea';
 import { DATA, parseMessage } from '../core';
+import Textarea from '../component/Textarea';
 
 export default function App({
   status,
@@ -148,9 +148,11 @@ export default function App({
         </div>
       </section>
       <MessageWondow message={message} onClickDel={onClickDel} Data={Data} />
-      <BotTextarea
+      <Textarea
         value={value}
-        onContentChange={val => setValue(val)}
+        onContentChange={val => {
+          setValue(val);
+        }}
         onClickSend={() => sendMessage(value)}
         UserList={[
           {

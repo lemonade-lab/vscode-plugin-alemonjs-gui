@@ -7,6 +7,6 @@ npm install -g vsce
 vsce package
 code --install-extension <path-to-vsix-file>
 
-vsce login
+vsce login lemonade-x
 vsce publish
 ```

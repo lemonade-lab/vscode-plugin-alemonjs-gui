@@ -3,100 +3,7 @@
   "displayName": "ALemonJS GUI",
   "publisher": "lemonade-x",
   "description": "阿柠檬机器人可视化界面",
-  "version": "0.0.16",
-  "engines": {
-    "vscode": "^1.96.0"
-  },
-  "categories": [
-    "Other"
-  ],
-  "icon": "resources/favicon.ico",
-  "main": "./dist/extension.js",
-  "activationEvents": [
-    "onStartupFinished"
-  ],
-  "contributes": {
-    "commands": [
-      {
-        "command": "alemonjs.openGroup",
-        "title": "群聊",
-        "icon": "$(organization)"
-      },
-      {
-        "command": "alemonjs.openPrivate",
-        "title": "私聊",
-        "icon": "$(person)"
-      },
-      {
-        "command": "alemonjs.openConfigGuild",
-        "title": "配置频道"
-      },
-      {
-        "command": "alemonjs.openConfigUser",
-        "title": "配置用户"
-      },
-      {
-        "command": "alemonjs.openPanel",
-        "title": "新建窗口"
-      },
-      {
-        "command": "alemonjs.openSidebar",
-        "title": "侧边栏"
-      },
-      {
-        "command": "alemonjs.openSetting",
-        "title": "连接设置"
-      }
-    ],
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "alemonjs",
-          "title": "AlemonJS",
-          "icon": "$(comment-discussion)"
-        }
-      ]
-    },
-    "views": {
-      "alemonjs": [
-        {
-          "type": "webview",
-          "id": "alemonjs.chatSidebar",
-          "name": ""
-        }
-      ]
-    },
-    "menus": {
-      "view/title": [
-        {
-          "when": "view == alemonjs.chatSidebar",
-          "command": "alemonjs.openGroup",
-          "group": "navigation"
-        },
-        {
-          "when": "view == alemonjs.chatSidebar",
-          "command": "alemonjs.openPrivate",
-          "group": "navigation"
-        },
-        {
-          "when": "view == alemonjs.chatSidebar",
-          "command": "alemonjs.openConfigUser"
-        },
-        {
-          "when": "view == alemonjs.chatSidebar",
-          "command": "alemonjs.openConfigGuild"
-        },
-        {
-          "when": "view == alemonjs.chatSidebar",
-          "command": "alemonjs.openSetting"
-        },
-        {
-          "when": "view == alemonjs.chatSidebar",
-          "command": "alemonjs.openPanel"
-        }
-      ]
-    }
-  },
+  "version": "0.0.17",
   "scripts": {
     "dev": "vite",
     "bundle": "tsc && NODE_ENV='development' vite build",
@@ -191,5 +98,98 @@
   },
   "dependencies": {
     "buffer": "^6.0.3"
+  },
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "icon": "resources/favicon.ico",
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "alemonjs.openGroup",
+        "title": "群聊",
+        "icon": "$(organization)"
+      },
+      {
+        "command": "alemonjs.openPrivate",
+        "title": "私聊",
+        "icon": "$(person)"
+      },
+      {
+        "command": "alemonjs.openConfigGuild",
+        "title": "配置频道"
+      },
+      {
+        "command": "alemonjs.openConfigUser",
+        "title": "配置用户"
+      },
+      {
+        "command": "alemonjs.openPanel",
+        "title": "新建窗口"
+      },
+      {
+        "command": "alemonjs.openSidebar",
+        "title": "侧边栏"
+      },
+      {
+        "command": "alemonjs.openSetting",
+        "title": "连接设置"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "alemonjs",
+          "title": "AlemonJS",
+          "icon": "$(comment-discussion)"
+        }
+      ]
+    },
+    "views": {
+      "alemonjs": [
+        {
+          "type": "webview",
+          "id": "alemonjs.chatSidebar",
+          "name": ""
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "when": "view == alemonjs.chatSidebar",
+          "command": "alemonjs.openGroup",
+          "group": "navigation"
+        },
+        {
+          "when": "view == alemonjs.chatSidebar",
+          "command": "alemonjs.openPrivate",
+          "group": "navigation"
+        },
+        {
+          "when": "view == alemonjs.chatSidebar",
+          "command": "alemonjs.openConfigUser"
+        },
+        {
+          "when": "view == alemonjs.chatSidebar",
+          "command": "alemonjs.openConfigGuild"
+        },
+        {
+          "when": "view == alemonjs.chatSidebar",
+          "command": "alemonjs.openSetting"
+        },
+        {
+          "when": "view == alemonjs.chatSidebar",
+          "command": "alemonjs.openPanel"
+        }
+      ]
+    }
   }
 }

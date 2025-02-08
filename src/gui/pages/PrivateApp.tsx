@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { Shuffle } from '@/gui/ui/Icons';
 import { Config, Data, DataPrivate, Message, PrivateMessage } from '../typing';
 import MessageWondow from '../component/MessageWindow';
-import { DATA, parseMessage } from '../core';
-import BotTextarea from '../component/BotTextarea';
+import { DATA } from '../core';
+import Textarea from '../component/Textarea';
 
 export default function App({
   status,
@@ -135,7 +135,7 @@ export default function App({
         </div>
       </section>
       <MessageWondow message={message} onClickDel={onClickDel} Data={Data} />
-      <BotTextarea
+      <Textarea
         value={value}
         onContentChange={val => setValue(val)}
         onClickSend={() => sendMessage(value)}
