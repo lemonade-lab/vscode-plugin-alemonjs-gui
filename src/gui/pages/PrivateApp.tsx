@@ -105,18 +105,18 @@ export default function App({
       <section className="select-none flex flex-row justify-between w-full shadow-md">
         <div className="flex flex-row gap-3 px-2 py-1 cursor-pointer">
           <div className="flex items-center">
-            {Data.ChannelAvatar && Data.ChannelAvatar != '' && (
+            {Data.BotAvatar && Data.BotAvatar != '' && (
               <img
                 className="w-10 h-10 rounded-full"
-                src={Data.ChannelAvatar}
+                src={Data.BotAvatar}
                 alt="Avatar"
               />
             )}
           </div>
           <div className="flex flex-col justify-center">
-            <div className="font-semibold ">{Data.ChannelName}</div>
+            <div className="font-semibold ">{Data.BotName}</div>
             <div className="text-sm text-[var(--vscode-textPreformat-background)]">
-              测试群
+              测试机器人
             </div>
           </div>
         </div>
