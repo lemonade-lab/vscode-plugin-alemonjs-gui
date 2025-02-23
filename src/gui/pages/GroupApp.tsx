@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Shuffle } from '@/gui/ui/Icons';
 import {
-  Config,
+  Channel,
   Data,
   DataPublic,
   Message,
@@ -9,56 +9,76 @@ import {
   User
 } from '../typing';
 import MessageWondow from '../component/MessageWindow';
-import { DATA, parseMessage } from '../core';
+import { DATA, initUser, parseMessage } from '../core';
 import Textarea from '../component/Textarea';
+import MessageHeader from '../component/MessageHeader';
 
-export default function App({
+export default function GroupApp({
   status,
-  Data,
-  user
+  // channel,
+  channels,
+  // user,
+  users
 }: {
   status: boolean;
-  Data: Config;
-  user: User[];
+  channels: Channel[];
+  users: User[];
 }) {
   const [value, setValue] = useState('');
-
   const [message, setMessage] = useState<PublicMessage[]>([]);
+  const [channel, setChannel] = useState<Channel>({
+    GuildId: channels[0]?.GuildId ?? '',
+    ChannelId: channels[0]?.ChannelId ?? '',
+    ChannelName: channels[0]?.ChannelName ?? '',
+    ChannelAvatar: channels[0]?.ChannelAvatar ?? ' '
+  });
+  // const [user, setUser] = useState<User>({
+  //   UserId: users[0]?.UserId ?? '',
+  //   UserName: users[0]?.UserName ?? '',
+  //   UserAvatar: users[0]?.UserAvatar ?? '',
+  //   OpenId: users[0]?.OpenId ?? '',
+  //   IsBot: users[0]?.IsBot ?? false
+  // });
+  /**
+   * 添加消息
+   */
+  const addMessage = (event: Data) => {
+    if (event.t == 'send_message') {
+      const d = event.d;
+      setMessage(message => [...message, d]);
+    } else if (event.t == 'post_channel') {
+      const d = event.d;
+      setMessage(d.map(item => item.d));
+    }
+  };
 
   useEffect(() => {
+    // 断开的。
     if (!window.socket) return;
-    if (status) {
-      // 监听消息事件
-      window.socket.onmessage = db => {
-        const event = DATA.parse(db.data);
-        console.log('t', event.t);
-        if (event.t == 'send_message') {
-          const d = event.d;
-          setMessage(message => [...message, d]);
-        } else if (event.t == 'post_channel') {
-          // 获取消息
-          const d = event.d;
-          setMessage(d.map(item => item.d));
-        }
-      };
-
-      // 获取消息
-      if (message.length == 0) {
-        const createAt = Date.now();
-        window.socket.send(
-          JSON.stringify({
-            t: 'get_channel',
-            d: {
-              createAt
-            }
-          })
-        );
-      }
-    } else {
+    if (!status) {
       // 清除监听
       window.socket.onmessage = null;
     }
-
+    // 监听消息事件
+    window.socket.onmessage = db => {
+      const event = DATA.parse(db.data);
+      console.log('t', event.t);
+      addMessage(event);
+    };
+    if (message.length !== 0) {
+      return;
+    }
+    // 获取消息
+    const createAt = Date.now();
+    // 发送消息
+    window.socket.send(
+      JSON.stringify({
+        t: 'get_channel',
+        d: {
+          createAt
+        }
+      })
+    );
     return () => {
       if (!window.socket) return;
       window.socket.onmessage = null;
@@ -66,39 +86,54 @@ export default function App({
   }, [status]);
 
   /**
+   * 发送消息
    * @param msg
    */
   const sendMessage = (msg: string) => {
-    if (!status) return;
+    if (!status || !window.socket || !msg) return;
+
+    console.log('msg', msg);
+
+    // 解析msg成结构体。
+    const MessageBody = parseMessage({
+      Users: users,
+      Channels: channels,
+      input: msg
+    });
+
+    console.log('MessageBody', MessageBody);
+
+    const data: DataPublic = {
+      t: 'send_message',
+      d: {
+        GuildId: channel.GuildId,
+        ChannelId: channel.ChannelId,
+        UserId: initUser.UserId,
+        UserName: initUser.UserName,
+        UserAvatar: initUser.UserAvatar,
+        IsBot: false,
+        OpenId: initUser.OpenId,
+        MessageId: Date.now(),
+        createAt: Date.now(),
+        MessageBody: MessageBody
+      }
+    };
+
+    // 添加消息
+    addMessage(data);
+
+    // 清空
+    setValue('');
 
     // 发送消息
-    if (window.socket && msg != '') {
-      console.log('msg', msg);
-      const MessageBody = parseMessage(msg);
-      console.log('MessageBody', MessageBody);
-      const data: DataPublic = {
-        t: 'send_message',
-        d: {
-          GuildId: Data.GuildId,
-          ChannelId: Data.ChannelId,
-          UserId: Data.UserId,
-          UserName: Data.UserName,
-          UserAvatar: Data.UserAvatar,
-          IsBot: false,
-          OpenId: Data.OpenId,
-          MessageId: Date.now(),
-          createAt: Date.now(),
-          MessageBody: MessageBody
-        }
-      };
-      // 消息
-      setMessage([...message, data.d]);
-      // 清空
-      setValue('');
-      window.socket.send(DATA.stringify(data));
-    }
+    window.socket.send(DATA.stringify(data));
   };
 
+  /**
+   * 删除消息
+   * @param item
+   * @returns
+   */
   const onClickDel = (item: Message) => {
     if (!status) return;
     const data: Data = {
@@ -109,67 +144,56 @@ export default function App({
       }
     };
     window.socket.send(DATA.stringify(data));
-    const news = message.filter(i => i.MessageId != item.MessageId);
-    setMessage(news);
+    setMessage(message.filter(i => i.MessageId != item.MessageId));
   };
 
   return (
     <section className="flex-1 flex flex-col  overflow-auto ">
-      <section className="select-none flex flex-row justify-between w-full shadow-md">
-        <div className="flex flex-row gap-3 px-2 py-1 cursor-pointer">
-          <div className="flex items-center">
-            {Data.ChannelAvatar && Data.ChannelAvatar != '' && (
-              <img
-                className="w-10 h-10 rounded-full"
-                src={Data.ChannelAvatar}
-                alt="Avatar"
-              />
-            )}
-          </div>
-          <div className="flex flex-col justify-center">
-            <div className="font-semibold ">{Data.ChannelName}</div>
-            <div className="text-sm text-[var(--vscode-textPreformat-background)]">
-              测试群
-            </div>
-          </div>
+      <MessageHeader
+        value={{
+          avatar: channel.ChannelAvatar,
+          decs: channel.GuildId,
+          name: channel.ChannelName
+        }}
+      >
+        <div className="px-4  flex flex-row items-center  ">
+          <select
+            onChange={e => {
+              const index = e.target.selectedIndex;
+              setChannel(channels[index]);
+            }}
+            className="px-2 py-1 rounded-md bg-[var(--vscode-input-background)] hover:bg-[var(--vscode-activityBar-background)] text-[var(--vscode-input-foreground)]"
+          >
+            {channels.map((item, index) => {
+              return (
+                <option key={index} value={item.ChannelId}>
+                  {item.ChannelId}
+                </option>
+              );
+            })}
+          </select>
         </div>
-        <div
-          onClick={() => {
-            vscode.postMessage({
-              type: 'window.showInformationMessage',
-              payload: {
-                text: '暂未开放'
-              }
-            });
-          }}
-          className="flex-row cursor-pointer flex items-center px-4  hover:bg-[var(--vscode-activityBar-background)]"
-        >
-          <Shuffle />
-        </div>
-      </section>
-      <MessageWondow message={message} onClickDel={onClickDel} Data={Data} />
+      </MessageHeader>
+      {
+        // 消息窗口
+      }
+      <MessageWondow message={message} onClickDel={onClickDel} />
+      {
+        // 输入窗口
+      }
       <Textarea
         value={value}
-        onContentChange={val => {
-          setValue(val);
-        }}
+        onContentChange={val => setValue(val)}
         onClickSend={() => sendMessage(value)}
-        UserList={[
+        userList={[
           {
-            OpenId: 'everyone',
-            UserName: '全体成员',
             UserId: 'everyone',
-            IsBot: false,
-            UserAvatar: ''
+            UserName: '全体成员',
+            UserAvatar: '',
+            OpenId: 'everyone',
+            IsBot: false
           },
-          {
-            OpenId: Data.BotId,
-            UserId: Data.BotId,
-            IsBot: false,
-            UserName: Data.BotName,
-            UserAvatar: Data.BotAvatar
-          },
-          ...user
+          ...users
         ]}
       />
     </section>

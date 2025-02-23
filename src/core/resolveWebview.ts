@@ -10,29 +10,36 @@ export const resolveWebviewView = (
    */
   const fsFreadFile = (
     webview: vscode.Webview,
-    {
-      tyep,
-      jsonDir,
-      payload
-    }: {
-      tyep: string;
-      jsonDir: string;
-      payload: any;
+    data: {
+      type: string;
+      payload: {
+        code: string;
+        path: string;
+        data?: string | null;
+      };
     }
   ) => {
-    const dir = context.asAbsolutePath(jsonDir);
+    const dir = context.asAbsolutePath(data.payload.path);
     if (!require('fs').existsSync(dir)) {
-      webview.postMessage({
-        type: tyep,
-        payload: payload
+      const dirPath = require('path').dirname(dir);
+      require('fs').mkdirSync(dirPath, {
+        recursive: true
       });
-      require('fs').writeFileSync(dir, JSON.stringify(payload));
+      webview.postMessage({
+        type: data.type,
+        payload: {
+          code: data.payload.code,
+          data: null
+        }
+      });
       return;
     }
-    const data = require('fs').readFileSync(dir, 'utf-8');
     webview.postMessage({
-      type: tyep,
-      payload: JSON.parse(data)
+      type: data.type,
+      payload: {
+        code: data.payload.code,
+        data: JSON.parse(require('fs').readFileSync(dir, 'utf-8'))
+      }
     });
   };
 
@@ -42,15 +49,18 @@ export const resolveWebviewView = (
    * @param message
    */
   const fsWriteFile = (
-    message: any,
-    {
-      jsonDir
-    }: {
-      jsonDir: string;
+    webview: vscode.Webview,
+    data: {
+      type: string;
+      payload: {
+        code: string;
+        path: string;
+        data?: string | null;
+      };
     }
   ) => {
-    const dir = context.asAbsolutePath(jsonDir);
-    require('fs').writeFileSync(dir, JSON.stringify(message.payload));
+    const dir = context.asAbsolutePath(data.payload.path);
+    require('fs').writeFileSync(dir, JSON.stringify(data.payload.data));
     vscode.window.showInformationMessage('保存成功');
   };
 
@@ -66,113 +76,37 @@ export const resolveWebviewView = (
     ]
   };
 
-  /**
-   *
-   */
+  // 监听webview发送的消息
   webview.onDidReceiveMessage(
     message => {
       switch (message.type) {
+        // 显示通知
         case 'window.showInformationMessage': {
           vscode.window.showInformationMessage(message.payload.text);
           break;
         }
-        case 'fs.readFile.config': {
+        // 读文件
+        case 'fs.readFile': {
           fsFreadFile(webview, {
-            tyep: 'fs.readFile.config',
-            jsonDir: 'dist/config.json',
+            type: 'fs.readFile',
             payload: {
-              host: 'localhost',
-              port: '17127'
+              code: message.payload.code,
+              path: `dist/${message.payload.path}`,
+              data: null
             }
           });
           break;
         }
-        case 'fs.writeFile.config': {
-          fsWriteFile(message, {
-            jsonDir: 'dist/config.json'
-          });
-          break;
-        }
-        case 'fs.readFile.message': {
-          fsFreadFile(webview, {
-            tyep: 'fs.readFile.message',
-            jsonDir: 'dist/message.json',
+        // 写文件
+        case 'fs.writeFile': {
+          fsWriteFile(webview, {
+            type: 'fs.writeFile',
             payload: {
-              BotId: '794161769',
-              BotName: '阿柠檬',
-              BotAvatar: 'https://q1.qlogo.cn/g?b=qq&s=0&nk=794161769',
-              UserId: '1715713638',
-              UserName: '柠檬冲水',
-              IsBot: false,
-              OpenId: '120120120',
-              UserAvatar: 'https://q1.qlogo.cn/g?b=qq&s=0&nk=1715713638',
-              GuildId: '123123',
-              ChannelId: '123456',
-              ChannelName: '机器人交流群',
-              ChannelAvatar: 'https://alemonjs.com/img/alemon.png'
+              code: message.payload?.code,
+              path: `dist/${message.payload.path}`,
+              data: message.payload.data
             }
           });
-          break;
-        }
-        case 'fs.writeFile.message': {
-          fsWriteFile(message, {
-            jsonDir: 'dist/message.json'
-          });
-          break;
-        }
-        case 'fs.readFile.users': {
-          fsFreadFile(webview, {
-            tyep: 'fs.readFile.users',
-            jsonDir: 'dist/users.json',
-            payload: [
-              {
-                UserId: '916415899',
-                UserName: '小柠檬',
-                OpenId: '120120122',
-                UserAvatar: 'https://q1.qlogo.cn/g?b=qq&s=0&nk=916415899'
-              }
-            ]
-          });
-          break;
-        }
-        case 'fs.writeFile.users': {
-          fsWriteFile(message, {
-            jsonDir: 'dist/users.json'
-          });
-          break;
-        }
-        case 'fs.writeFile.users.add': {
-          const jsonDir = 'dist/users.json';
-          const dir = context.asAbsolutePath(jsonDir);
-          const data = require('fs').readFileSync(dir, 'utf-8');
-          const db = JSON.parse(data);
-          db.push(message.payload);
-          require('fs').writeFileSync(dir, JSON.stringify(db));
-          vscode.window.showInformationMessage('保存成功');
-          break;
-        }
-        case 'fs.writeFile.users.del': {
-          const jsonDir = 'dist/users.json';
-          const dir = context.asAbsolutePath(jsonDir);
-          const data = require('fs').readFileSync(dir, 'utf-8');
-          const db = JSON.parse(data);
-          const id = message.payload.id;
-          const index = db.findIndex((item: any) => item.id === id);
-          db.splice(index, 1);
-          require('fs').writeFileSync(dir, JSON.stringify(db));
-          vscode.window.showInformationMessage('保存成功');
-          break;
-        }
-        case 'fs.writeFile.users.put': {
-          const jsonDir = 'dist/users.json';
-          const dir = context.asAbsolutePath(jsonDir);
-          const data = require('fs').readFileSync(dir, 'utf-8');
-          const db = JSON.parse(data);
-          const id = message.payload.id;
-          const index = db.findIndex((item: any) => item.id === id);
-          db[index] = message.payload;
-          require('fs').writeFileSync(dir, JSON.stringify(db));
-          vscode.window.showInformationMessage('保存成功');
           break;
         }
       }

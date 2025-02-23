@@ -1,51 +1,61 @@
 import { useEffect, useState } from 'react';
-import { Shuffle } from '@/gui/ui/Icons';
-import { Config, Data, DataPrivate, Message, PrivateMessage } from '../typing';
+import { Data, DataPrivate, Message, PrivateMessage, User } from '../typing';
 import MessageWondow from '../component/MessageWindow';
-import { DATA } from '../core';
+import { DATA, parseMessage } from '../core';
 import Textarea from '../component/Textarea';
-
-export default function App({
+import MessageHeader from '../component/MessageHeader';
+export default function PrivateApp({
   status,
-  Data
+  bot,
+  user
 }: {
   status: boolean;
-  Data: Config;
+  bot: User;
+  user: User;
 }) {
   const [value, setValue] = useState('');
   const [message, setMessage] = useState<PrivateMessage[]>([]);
 
+  /**
+   * 添加消息
+   */
+  const addMessage = (event: Data) => {
+    if (event.t == 'send_private_message') {
+      const d = event.d;
+      setMessage(message => [...message, d]);
+    } else if (event.t == 'post_private') {
+      const d = event.d;
+      setMessage(d.map(item => item.d));
+    }
+  };
+
   useEffect(() => {
+    // 断开的。
     if (!window.socket) return;
-    if (status) {
-      // 监听消息事件
-      window.socket.onmessage = db => {
-        const event = DATA.parse(db.data);
-        console.log('t', event.t);
-        if (event.t == 'send_private_message') {
-          const d = event.d;
-          setMessage(message => [...message, d]);
-        } else if (event.t == 'post_private') {
-          const d = event.d;
-          setMessage(d.map(item => item.d));
-        }
-      };
-      if (message.length == 0) {
-        const createAt = Date.now();
-        window.socket.send(
-          JSON.stringify({
-            t: 'get_private',
-            d: {
-              createAt
-            }
-          })
-        );
-      }
-    } else {
+    if (!status) {
       // 清除监听
       window.socket.onmessage = null;
     }
-
+    // 监听消息事件
+    window.socket.onmessage = db => {
+      const event = DATA.parse(db.data);
+      console.log('t', event.t);
+      addMessage(event);
+    };
+    if (message.length !== 0) {
+      return;
+    }
+    // 获取消息
+    const createAt = Date.now();
+    // 发送消息
+    window.socket.send(
+      JSON.stringify({
+        t: 'get_channel',
+        d: {
+          createAt
+        }
+      })
+    );
     return () => {
       if (!window.socket) return;
       window.socket.onmessage = null;
@@ -53,38 +63,52 @@ export default function App({
   }, [status]);
 
   /**
+   * 发送消息
    * @param msg
    */
   const sendMessage = (msg: string) => {
-    if (!status) return;
-    if (window.socket && msg != '') {
-      // const MessageBody = parseMessage(msg);
-      const data: DataPrivate = {
-        t: 'send_private_message',
-        d: {
-          UserId: Data.UserId,
-          UserName: Data.UserName,
-          UserAvatar: Data.UserAvatar,
-          IsBot: false,
-          OpenId: Data.OpenId,
-          MessageId: Date.now(),
-          createAt: Date.now(),
-          MessageBody: [
-            {
-              type: 'Text',
-              value: msg
-            }
-          ]
-        }
-      };
-      // 消息
-      setMessage([...message, data.d]);
-      // 清空
-      setValue('');
-      window.socket.send(DATA.stringify(data));
-    }
+    if (!status || !window.socket || !msg) return;
+
+    console.log('msg', msg);
+
+    // 解析msg成结构体。
+    const MessageBody = parseMessage({
+      Users: [],
+      Channels: [],
+      input: msg
+    });
+
+    console.log('MessageBody', MessageBody);
+
+    const data: DataPrivate = {
+      t: 'send_private_message',
+      d: {
+        UserId: user.UserId,
+        UserName: user.UserName,
+        UserAvatar: user.UserAvatar,
+        IsBot: false,
+        OpenId: user.OpenId,
+        MessageId: Date.now(),
+        createAt: Date.now(),
+        MessageBody: MessageBody
+      }
+    };
+
+    // 添加消息
+    addMessage(data);
+
+    // 清空
+    setValue('');
+
+    // 发送消息
+    window.socket.send(DATA.stringify(data));
   };
 
+  /**
+   * 删除消息
+   * @param item
+   * @returns
+   */
   const onClickDel = (item: Message) => {
     if (!status) return;
     const data: Data = {
@@ -95,32 +119,19 @@ export default function App({
       }
     };
     window.socket.send(DATA.stringify(data));
-
-    const news = message.filter(i => i.MessageId != item.MessageId);
-    setMessage(news);
+    setMessage(message.filter(i => i.MessageId != item.MessageId));
   };
 
   return (
     <section className="flex-1 flex flex-col  overflow-auto ">
-      <section className="select-none flex flex-row justify-between w-full shadow-md">
-        <div className="flex flex-row gap-3 px-2 py-1 cursor-pointer">
-          <div className="flex items-center">
-            {Data.BotAvatar && Data.BotAvatar != '' && (
-              <img
-                className="w-10 h-10 rounded-full"
-                src={Data.BotAvatar}
-                alt="Avatar"
-              />
-            )}
-          </div>
-          <div className="flex flex-col justify-center">
-            <div className="font-semibold ">{Data.BotName}</div>
-            <div className="text-sm text-[var(--vscode-textPreformat-background)]">
-              测试机器人
-            </div>
-          </div>
-        </div>
-        <div
+      <MessageHeader
+        value={{
+          avatar: bot.UserAvatar,
+          decs: bot.UserId,
+          name: bot.UserName
+        }}
+      >
+        {/* <div
           onClick={() => {
             vscode.postMessage({
               type: 'window.showInformationMessage',
@@ -132,13 +143,20 @@ export default function App({
           className="flex-row cursor-pointer flex items-center px-4  hover:bg-[var(--vscode-activityBar-background)]"
         >
           <Shuffle />
-        </div>
-      </section>
-      <MessageWondow message={message} onClickDel={onClickDel} Data={Data} />
+        </div> */}
+      </MessageHeader>
+      {
+        // 消息窗口
+      }
+      <MessageWondow message={message} onClickDel={onClickDel} />
+      {
+        // 输入窗口
+      }
       <Textarea
         value={value}
         onContentChange={val => setValue(val)}
         onClickSend={() => sendMessage(value)}
+        userList={[]}
       />
     </section>
   );

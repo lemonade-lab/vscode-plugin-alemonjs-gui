@@ -19,3 +19,18 @@ export type Config = {
   ChannelName: string;
   ChannelAvatar: string;
 } & User;
+
+export type User = {
+  UserId: string;
+  UserName: string;
+  UserAvatar: string;
+  OpenId: string;
+  IsBot: boolean;
+};
+
+export type Channel = {
+  GuildId: string;
+  ChannelId: string;
+  ChannelAvatar: string;
+  ChannelName: string;
+};

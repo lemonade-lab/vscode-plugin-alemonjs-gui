@@ -1,13 +1,24 @@
 import { Message } from '../typing';
 import dayjs from 'dayjs';
 import { Buffer } from 'buffer';
-export default function MessageBot({ item }: { item: Message }) {
+/**
+ *
+ * @param param0
+ * @returns
+ */
+export default function MessageBubble({
+  messageBody,
+  createAt
+}: {
+  messageBody: Message['MessageBody'];
+  createAt: number;
+}) {
   return (
     <div className="rounded-md relative p-3 shadow-md bg-[var(--vscode-panel-background)]">
       {
         // 消息是一个body。需要按格式解析
       }
-      {item.MessageBody.map((item, index) => {
+      {messageBody.map((item, index) => {
         if (item.type == 'Image') {
           const blob = new Blob([Buffer.from(item.value)]);
           // 转为本地地址
@@ -97,7 +108,7 @@ export default function MessageBot({ item }: { item: Message }) {
       <span className="absolute -bottom-3 whitespace-nowrap right-0 text-[0.5rem]">
         {
           // 时间戳格式化
-          dayjs(item.createAt).format('YYYY-MM-DD HH:mm:ss')
+          dayjs(createAt).format('YYYY-MM-DD HH:mm:ss')
         }
       </span>
     </div>

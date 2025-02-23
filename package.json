@@ -3,7 +3,7 @@
   "displayName": "ALemonJS GUI",
   "publisher": "lemonade-x",
   "description": "阿柠檬机器人可视化界面",
-  "version": "0.0.18",
+  "version": "0.1.0",
   "scripts": {
     "dev": "vite",
     "bundle": "tsc && NODE_ENV='development' vite build",
@@ -124,11 +124,11 @@
       },
       {
         "command": "alemonjs.openConfigGuild",
-        "title": "配置频道"
+        "title": "频道列表"
       },
       {
         "command": "alemonjs.openConfigUser",
-        "title": "配置用户"
+        "title": "用户列表"
       },
       {
         "command": "alemonjs.openPanel",

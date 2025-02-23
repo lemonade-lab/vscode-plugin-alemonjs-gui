@@ -1,13 +1,12 @@
 import { useEffect, useRef } from 'react';
-import MessageBot from './MessageBot';
-import { Config, Message } from '../typing';
+import { Message } from '../typing';
+import MessageBubble from './MessageBubble';
+
 export default function MessageWondow({
   message,
-  Data,
   onClickDel
 }: {
   message: Message[];
-  Data: Config;
   onClickDel: (item: Message) => void;
 }) {
   const MessageWindowRef = useRef<HTMLElement>(null);
@@ -33,12 +32,28 @@ export default function MessageWondow({
               !item.IsBot ? 'ml-auto flex-row-reverse' : 'mr-auto'
             }`}
           >
-            <img
-              className="w-12 h-12 rounded-full"
-              src={item.IsBot ? Data.BotAvatar : Data.UserAvatar}
-              alt="Avatar"
+            {
+              // 头像地址
+            }
+            {item.IsBot ? (
+              <div className="size-12">BOT</div>
+            ) : (
+              <img
+                className="size-12 rounded-full"
+                src={item.UserAvatar}
+                alt="Avatar"
+              />
+            )}
+            {
+              // 气泡框
+            }
+            <MessageBubble
+              messageBody={item.MessageBody}
+              createAt={item.createAt}
             />
-            <MessageBot item={item} />
+            {
+              // 删除消息
+            }
             <div
               onClick={() => onClickDel(item)}
               className="select-none cursor-pointer flex justify-end items-end"

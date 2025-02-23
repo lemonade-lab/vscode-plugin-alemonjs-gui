@@ -6,14 +6,14 @@ interface TextareaProps extends React.HTMLAttributes<HTMLTextAreaElement> {
   value: string;
   onContentChange?: (content: string) => void;
   onClickSend: () => void;
-  UserList?: User[];
+  userList?: User[];
 }
 
 export default function Textarea({
   value,
   onContentChange,
   onClickSend,
-  UserList,
+  userList,
   ...props
 }: TextareaProps) {
   const [showUserList, setShowUserList] = useState<boolean>(false);
@@ -49,17 +49,22 @@ export default function Textarea({
 
   // 聚焦第一个子元素
   useEffect(() => {
-    if (showUserList && UserList && UserList.length > 1) {
+    if (showUserList && userList && userList.length > 1) {
       const firstChild = selectRef.current?.firstElementChild as HTMLElement;
       firstChild?.focus();
     }
   }, [showUserList]);
 
+  // 输入框内容改变
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     console.log(e.target.value);
     setTextareaValue(e.target.value);
   };
 
+  /**
+   * 回车
+   * @param e
+   */
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && e.ctrlKey) {
       setTextareaValue(textareaValue + '\n');
@@ -73,10 +78,10 @@ export default function Textarea({
   return (
     <section className="select-none w-full flex flex-row justify-center px-4 py-1">
       <div className="flex gap-2 flex-col border border-[var(--vscode-sidebar-border)] focus-within:border-[var(--vscode-button-background)] bg-[var(--vscode-editor-background)] border-opacity-70 shadow-inner rounded-md w-full p-2">
-        {showUserList && UserList && UserList.length > 1 && (
+        {showUserList && userList && userList.length > 1 && (
           <div className="absolute rounded-md w-full max-w-36 max-h-32 overflow-y-auto  shadow-md border border-[var(--vscode-sidebar-border)] bg-[var(--vscode-editor-background)]">
             <div ref={selectRef} className="flex flex-col px-2 py-1">
-              {UserList.map(user => (
+              {userList.map(user => (
                 <div
                   key={user.UserId}
                   onClick={() => handleUserSelection(user.UserName)}

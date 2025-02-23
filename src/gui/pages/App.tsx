@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import GroupApp from '@/gui/pages/GroupApp';
-import PrivateApp from '@/gui/pages/PrivateApp';
-import { Config, User } from '../typing';
 import SettingApp from './Setting';
+import { initBot, initChannel, initConfig, initUser } from '../core';
+import GroupApp from './GroupApp';
+import PrivateApp from './PrivateApp';
 import ConfigUser from './ConfigUser';
-import ConfigGuild from './ConfigGuild';
+import ConfigChannel from './ConfigChannel';
+import { Channel, User } from '../typing';
+import { isArray } from 'lodash-es';
 
 export default function App() {
   const [status, setStatus] = useState<boolean>(false);
@@ -13,9 +15,12 @@ export default function App() {
   >('group');
 
   const [config, setConfig] = useState({
-    host: '',
-    port: ''
+    host: initConfig.host,
+    port: initConfig.port
   });
+
+  const [users, setUsers] = useState<User[]>([]);
+  const [channels, setChannels] = useState<Channel[]>([]);
 
   // 保存定时任务。确保只有一个定时任务
   const timeRef = useRef<any>(null);
@@ -27,57 +32,87 @@ export default function App() {
     countRef.current = 0;
   }, [config]);
 
-  const [user, setUser] = useState<User[]>([]);
-
-  const [data, setData] = useState<Config>({
-    BotId: '',
-    BotName: '',
-    BotAvatar: '',
-    UserId: '',
-    UserName: '',
-    UserAvatar: '',
-    OpenId: '',
-    IsBot: false,
-    GuildId: '',
-    ChannelId: '',
-    ChannelName: '',
-    ChannelAvatar: ''
-  });
-
   useEffect(() => {
     if (!window.vscode) return;
 
-    // 等待配置信息
-    const handleResponse = (event: any) => {
-      const message = event.data;
-      if (message.type === 'fs.readFile.config') {
-        setConfig(message.payload);
-      } else if (message.type === 'fs.readFile.message') {
-        setData(message.payload);
-      } else if (message.type === 'fs.readFile.users') {
-        setUser(message.payload);
-      } else if (message.type == 'alemonjs.openSetting') {
+    const action: {
+      [key: string]: (payload: any) => void;
+    } = {
+      'alemonjs.openSetting': () => {
         setTag('setting');
-      } else if (message.type == 'alemonjs.openConfigUser') {
+      },
+      'alemonjs.openConfigUser': () => {
         setTag('config.user');
-      } else if (message.type == 'alemonjs.openConfigGuild') {
+      },
+      'alemonjs.openConfigGuild': () => {
         setTag('config.guild');
-      } else if (message.type == 'alemonjs.openGroup') {
+      },
+      'alemonjs.openGroup': () => {
         setTag('group');
-      } else if (message.type == 'alemonjs.openPrivate') {
+      },
+      'alemonjs.openPrivate': () => {
         setTag('private');
       }
     };
 
-    // 请求得到配置
+    // 等待信息
+    const handleResponse = (event: {
+      data: {
+        type: string;
+        payload: any;
+      };
+    }) => {
+      const message = event.data;
+      console.log('message', message);
+      if (action[message.type]) {
+        action[message.type](message.payload);
+      } else if (message.type === 'fs.readFile') {
+        const code = message.payload.code;
+        // gui/config.json
+        if (code === 1000) {
+          const data = message.payload.data;
+          if (data) {
+            setConfig({
+              host: data?.host ?? initConfig.host,
+              port: data?.port ?? initConfig.port
+            });
+          }
+        } else if (code === 1010) {
+          const data = message.payload.data;
+          if (data && isArray(data)) {
+            setUsers(data);
+          }
+        } else if (code === 1020) {
+          const data = message.payload.data;
+          if (data && isArray(data)) {
+            setChannels(data);
+          }
+        }
+      }
+    };
+
     vscode.postMessage({
-      type: 'fs.readFile.config'
+      type: 'fs.readFile',
+      payload: {
+        code: 1000,
+        path: 'gui/config.json'
+      }
     });
+
     vscode.postMessage({
-      type: 'fs.readFile.message'
+      type: 'fs.readFile',
+      payload: {
+        code: 1010,
+        path: 'gui/users.json'
+      }
     });
+
     vscode.postMessage({
-      type: 'fs.readFile.users'
+      type: 'fs.readFile',
+      payload: {
+        code: 1020,
+        path: 'gui/channels.json'
+      }
     });
 
     setTimeout(() => {
@@ -143,46 +178,153 @@ export default function App() {
     }
   };
 
-  const onClickConfigSave = () => {
+  /**
+   * @param event
+   */
+  const onSubmitUsers = (user: User, preUser: User) => {
+    let values = null;
+    // 没有找到
+    if (!users.find(item => item.UserId == preUser.UserId)) {
+      // 新增
+      values = [...users, user];
+    } else {
+      values = users.map(item => {
+        if (item.UserId === preUser.UserId) {
+          return user;
+        }
+        return item;
+      });
+    }
+    setUsers(values);
     vscode.postMessage({
-      type: 'fs.writeFile.config',
-      payload: config
+      type: 'fs.writeFile',
+      payload: {
+        code: 1010,
+        path: 'gui/users.json',
+        data: values
+      }
     });
   };
 
-  const onClickMessageSave = () => {
+  /**
+   *
+   * @param user
+   */
+  const onDeleteUser = (user: User) => {
+    const values = users.filter(item => item.UserId !== user.UserId);
+    setUsers(values);
     vscode.postMessage({
-      type: 'fs.writeFile.message',
-      payload: data
+      type: 'fs.writeFile',
+      payload: {
+        code: 1010,
+        path: 'gui/users.json',
+        data: values
+      }
     });
+  };
+
+  /**
+   *
+   * @param event
+   */
+  const onSubmitChannel = (channel: Channel, preChannel: Channel) => {
+    let values = null;
+    // 没有找到
+    if (!channels.find(item => item.ChannelId == preChannel.ChannelId)) {
+      // 新增
+      values = [...channels, channel];
+    } else {
+      values = channels.map(item => {
+        if (item.ChannelId === preChannel.ChannelId) {
+          return channel;
+        }
+        return item;
+      });
+    }
+    console.log('values', values);
+    setChannels(values);
+    vscode.postMessage({
+      type: 'fs.writeFile',
+      payload: {
+        code: 1020,
+        path: 'gui/channels.json',
+        data: values
+      }
+    });
+  };
+
+  const onDeleteChannel = (channel: Channel) => {
+    const values = channels.filter(
+      item => item.ChannelId !== channel.ChannelId
+    );
+    setChannels(values);
+    vscode.postMessage({
+      type: 'fs.writeFile',
+      payload: {
+        code: 1020,
+        path: 'gui/channels.json',
+        data: values
+      }
+    });
+  };
+
+  /**
+   *
+   * @param event
+   */
+  const onSubmitConfig = (event: React.FormEvent<HTMLFormElement>) => {
+    const host = event.currentTarget.host.value;
+    const port = event.currentTarget.port.value;
+    const data = {
+      host,
+      port
+    };
+    setConfig(data);
+    vscode.postMessage({
+      type: 'fs.writeFile',
+      payload: {
+        code: 1000,
+        path: 'gui/config.json',
+        data: data
+      }
+    });
+    console.log('data', data);
   };
 
   return (
-    <section className="overflow-hidden  flex flex-1 flex-col bg-[var(--vscode-sideBar-background)] ">
+    <section className="overflow-hidden flex flex-1 flex-col bg-[var(--vscode-sideBar-background)] ">
       {tag === 'config.user' && (
         <ConfigUser
-          Data={data}
-          setData={setData}
-          onClickMessageSave={onClickMessageSave}
-          user={user}
+          users={users.length == 0 ? [initUser] : users}
+          onSubmit={onSubmitUsers}
+          onDelete={onDeleteUser}
         />
       )}
       {tag === 'config.guild' && (
-        <ConfigGuild
-          Data={data}
-          setData={setData}
-          onClickMessageSave={onClickMessageSave}
-          user={user}
+        <ConfigChannel
+          channels={channels.length == 0 ? [initChannel] : channels}
+          onSubmit={onSubmitChannel}
+          onDelete={onDeleteChannel}
         />
       )}
-      {tag === 'private' && <PrivateApp Data={data} status={status} />}
-      {tag === 'group' && <GroupApp user={user} Data={data} status={status} />}
-      {tag === 'setting' && (
-        <SettingApp
-          config={config}
-          setConfig={setConfig}
-          onClickConfigSave={onClickConfigSave}
+      {tag === 'private' && (
+        <PrivateApp
+          status={status}
+          bot={initBot}
+          user={users.length == 0 ? initUser : users[0]}
         />
+      )}
+      {tag === 'group' && (
+        <GroupApp
+          status={status}
+          // channel={{}}
+          channels={channels.length == 0 ? [initChannel] : channels}
+          // user={{}}
+          users={users.length == 0 ? [initBot] : [initBot, ...users]}
+        />
+      )}
+      {tag === 'setting' && (
+        <SettingApp value={config} onSubmit={onSubmitConfig} />
       )}
       <header className="flex flex-row justify-between items-center px-4 select-none ">
         ws://{config.host}:{config.port} {status ? 'connet' : 'close'}
