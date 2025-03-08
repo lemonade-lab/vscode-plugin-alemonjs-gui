@@ -309,6 +309,7 @@ export default function App() {
       )}
       {tag === 'private' && (
         <PrivateApp
+          config={config}
           status={status}
           bot={initBot}
           user={users.length == 0 ? initUser : users[0]}
@@ -316,6 +317,7 @@ export default function App() {
       )}
       {tag === 'group' && (
         <GroupApp
+          config={config}
           status={status}
           // channel={{}}
           channels={channels.length == 0 ? [initChannel] : channels}

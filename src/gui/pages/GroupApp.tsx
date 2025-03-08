@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Shuffle } from '@/gui/ui/Icons';
 import {
   Channel,
   Data,
@@ -12,14 +11,20 @@ import MessageWondow from '../component/MessageWindow';
 import { DATA, initUser, parseMessage } from '../core';
 import Textarea from '../component/Textarea';
 import MessageHeader from '../component/MessageHeader';
+import { Button } from '../ui/Button';
 
 export default function GroupApp({
+  config,
   status,
   // channel,
   channels,
   // user,
   users
 }: {
+  config: {
+    host: string;
+    port: string;
+  };
   status: boolean;
   channels: Channel[];
   users: User[];
@@ -147,9 +152,45 @@ export default function GroupApp({
     setMessage(message.filter(i => i.MessageId != item.MessageId));
   };
 
+  const [command, setCommand] = useState<
+    {
+      name: string;
+      type: string;
+      value: string;
+    }[]
+  >([]);
+
+  const onClick = async () => {
+    // 打开指令列表
+    if (command.length == 0) {
+      // 获取指令列表
+      const url = `http://${config.host}:${config.port}/command.json`;
+      const urls = `http://${config.host}:${config.port}/command.public.json`;
+      await fetch(url)
+        .then(res => res.json())
+        .then((res: any[]) => {
+          setCommand(data => [...res, ...data]);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      await fetch(urls)
+        .then(res => res.json())
+        .then((res: any[]) => {
+          setCommand(data => [...res, ...data]);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    } else {
+      setCommand([]);
+    }
+  };
+
   return (
     <section className="flex-1 flex flex-col  overflow-auto ">
       <MessageHeader
+        onClick={onClick}
         value={{
           avatar: channel.ChannelAvatar,
           decs: channel.GuildId,
@@ -177,12 +218,29 @@ export default function GroupApp({
       {
         // 消息窗口
       }
-      <MessageWondow message={message} onClickDel={onClickDel} />
+      <div className="flex-1 flex overflow-auto">
+        {command.length != 0 && (
+          <div className="bg-[var(--vscode-panel-background)] flex flex-col gap-2 overflow-auto min-w-14 p-1 m-1 shadow-inner">
+            {command.map((item, index) => {
+              return (
+                <Button
+                  key={index}
+                  onClick={() => {
+                    sendMessage(item.value);
+                  }}
+                >
+                  {item?.name ?? item.value}
+                </Button>
+              );
+            })}
+          </div>
+        )}
+        <MessageWondow message={message} onClickDel={onClickDel} />
+      </div>
       {
         // 输入窗口
       }
       <Textarea
-        value={value}
         onContentChange={val => setValue(val)}
         onClickSend={() => sendMessage(value)}
         userList={[

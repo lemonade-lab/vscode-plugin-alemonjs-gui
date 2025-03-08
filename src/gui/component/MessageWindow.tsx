@@ -22,7 +22,7 @@ export default function MessageWondow({
   return (
     <section
       ref={MessageWindowRef}
-      className="flex-1 w-full h-full flex flex-col overflow-auto"
+      className="flex-1 flex flex-col overflow-auto"
     >
       <section className="flex-1 px-3 py-2 flex gap-4 flex-col ">
         {message.map((item, index) => (

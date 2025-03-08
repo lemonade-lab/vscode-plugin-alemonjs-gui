@@ -3,36 +3,54 @@ import { User } from '../typing';
 import { SendIcon } from '../ui/Icons';
 
 interface TextareaProps extends React.HTMLAttributes<HTMLTextAreaElement> {
-  value: string;
+  // value: string;
   onContentChange?: (content: string) => void;
   onClickSend: () => void;
   userList?: User[];
 }
 
 export default function Textarea({
-  value,
+  // value,
   onContentChange,
   onClickSend,
   userList,
   ...props
 }: TextareaProps) {
+  // 是否显示用户列表
   const [showUserList, setShowUserList] = useState<boolean>(false);
 
+  // 输入框内容
   const [textareaValue, setTextareaValue] = useState<string>('');
-  // 监听输入到每一个字符。当输入到@的时候，显示用户列表，并聚焦到第一个用户。
 
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  // 监听输入到每一个字符。当输入到@的时候，显示用户列表，并聚焦到第一个用户。
   useEffect(() => {
+    // 如果输入的内容以@结尾
     if (textareaValue.endsWith('@')) {
+      // 显示用户列表
       setShowUserList(true);
     } else {
+      // 隐藏用户列表
       setShowUserList(false);
     }
+    // 当输入框内容改变时，触发回调函数
     onContentChange?.(textareaValue);
   }, [textareaValue]);
 
-  useEffect(() => {
-    textareaValue !== value && setTextareaValue(value);
-  }, [value]);
+  // useEffect(() => {
+  //   textareaValue !== value && setTextareaValue(value);
+  // }, [value]);
+
+  const onSend = async () => {
+    try {
+      await onClickSend();
+      // 清空输入框
+      setTextareaValue('');
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   /**
    * 选择用户
@@ -47,13 +65,19 @@ export default function Textarea({
 
   const selectRef = useRef<HTMLDivElement | null>(null);
 
-  // 聚焦第一个子元素
-  useEffect(() => {
-    if (showUserList && userList && userList.length > 1) {
-      const firstChild = selectRef.current?.firstElementChild as HTMLElement;
-      firstChild?.focus();
-    }
-  }, [showUserList]);
+  // useEffect(() => {
+  //   // 聚焦第一个子元素
+  //   if (showUserList && userList && userList.length > 1) {
+  //     const firstChild = selectRef.current?.firstElementChild as HTMLElement;
+  //     firstChild?.focus();
+  //   } else {
+  //     // 确保重新聚焦到输入框
+  //     // 先判断是否聚焦
+  //     if (document.activeElement !== textareaRef.current) {
+  //       textareaRef.current?.focus();
+  //     }
+  //   }
+  // }, [showUserList]);
 
   // 输入框内容改变
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -65,14 +89,24 @@ export default function Textarea({
    * 回车
    * @param e
    */
-  const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const onKeyDown = async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && e.ctrlKey) {
       setTextareaValue(textareaValue + '\n');
     } else if (e.key === 'Enter') {
       e.preventDefault();
       console.log('Enter');
-      onClickSend();
+      await onSend();
     }
+  };
+
+  /**
+   * 点击发送按钮
+   * @param e
+   */
+  const onClick = async (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
+    await onSend();
   };
 
   return (
@@ -94,6 +128,7 @@ export default function Textarea({
           </div>
         )}
         <textarea
+          ref={textareaRef}
           className="min-h-20 resize-none max-h-64 border-0 focus:border-0 bg-opacity-0 bg-[var(--vscode-editor-background)] rounded-md "
           placeholder="输入内容..."
           value={textareaValue}
@@ -108,11 +143,7 @@ export default function Textarea({
           </div>
           <div
             className="border border-[var(--vscode-sidebar-border)] border-opacity-70  px-3 cursor-pointer rounded-md flex items-center justify-center hover:bg-[var(--vscode-button-background)]"
-            onClick={e => {
-              e.stopPropagation();
-              e.preventDefault();
-              onClickSend();
-            }}
+            onClick={onClick}
           >
             <SendIcon />
           </div>
