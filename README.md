@@ -1,22 +1,26 @@
-# AlemonJS GUI
+# ALemonJS GUI
 
-开发文档[https://alemonjs.com/](https://alemonjs.com/)
+> [https://alemonjs.com/](https://alemonjs.com/)
 
-这是一个可以在vscode中使用gui平台进行测试的插件。
+这是一个使用GUI对alemonjs app进行测试的扩展。
 
-新增alemon.config.yaml文件并配置。
+## 启动 GUI 服务
 
-- alemon.config.yaml
+```sh
+yarn dev --login gui
+```
+
+默认端口号 17127,如修改请新增alemon.config.yaml
 
 ```yaml
 gui:
   port: 17127
 ```
 
-拉取开发模版后，一般需要这样去启动服务
+## 更改连接地址
 
-```sh
-yarn run dev --login gui
-```
+默认情况下，扩展配置的端口也是 17127，
 
-启动后，需要点击`连接`才可以进行后续操作
+如需修改请点击，更多>连接配置，更改端口后保存。
+
+关闭扩展窗口并打开。即可重连

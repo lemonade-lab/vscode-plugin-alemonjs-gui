@@ -3,7 +3,7 @@
   "displayName": "ALemonJS GUI",
   "publisher": "lemonade-x",
   "description": "阿柠檬机器人可视化界面",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "scripts": {
     "dev": "vite",
     "bundle": "tsc && NODE_ENV='development' vite build",
@@ -26,6 +26,7 @@
     "test": "vscode-test"
   },
   "devDependencies": {
+    "@alemonjs/gui": "^2.1.0-alpha.2",
     "@babel/eslint-parser": "^7.12.13",
     "@babel/eslint-plugin": "^7.12.13",
     "@ecomfe/eslint-config": "^7.0.0",
@@ -46,6 +47,7 @@
     "@vitejs/plugin-react": "^4.2.1",
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1",
+    "alemonjs": "^2.1.0-alpha.2",
     "animate.css": "^4.1.1",
     "autoprefixer": "^10.4.19",
     "axios": "^1.6.8",

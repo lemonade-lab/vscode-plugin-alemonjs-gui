@@ -1,9 +1,9 @@
-import type { User } from '@alemonjs/gui';
+import type { User as GUIUser } from '@alemonjs/gui';
 export type {
   PrivateMessage,
   Message,
   PublicMessage,
-  User,
+  User as GUIUser,
   DataPrivate,
   DataPublic,
   Data
@@ -18,7 +18,7 @@ export type Config = {
   ChannelId: string;
   ChannelName: string;
   ChannelAvatar: string;
-} & User;
+} & GUIUser;
 
 export type User = {
   UserId: string;

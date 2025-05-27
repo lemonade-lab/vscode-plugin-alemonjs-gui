@@ -20,7 +20,12 @@ export default function MessageBubble({
       }
       {messageBody.map((item, index) => {
         if (item.type == 'Image') {
-          const blob = new Blob([Buffer.from(item.value)]);
+          // 数组，buffer 被格式化的数据
+          // 字符串，buffer base64 编码的数据
+          const data = Array.isArray(item.value)
+            ? Buffer.from(item.value)
+            : Buffer.from(item.value, 'base64');
+          const blob = new Blob([data]);
           // 转为本地地址
           const url = URL.createObjectURL(blob);
           return (
@@ -29,6 +34,16 @@ export default function MessageBubble({
               className="max-w-[15rem] xl:max-w-[20rem] rounded-md"
               src={url}
               alt="Image"
+            />
+          );
+        } else if (item.type == 'ImageURL') {
+          const url = item.value;
+          return (
+            <img
+              key={index}
+              className="max-w-[15rem] xl:max-w-[20rem] rounded-md"
+              src={url}
+              alt="ImageURL"
             />
           );
         } else if (item.type == 'Text') {
