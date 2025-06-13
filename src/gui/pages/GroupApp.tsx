@@ -97,8 +97,6 @@ export default function GroupApp({
   const sendMessage = (msg: string) => {
     if (!status || !window.socket || !msg) return;
 
-    console.log('msg', msg);
-
     // 解析msg成结构体。
     const MessageBody = parseMessage({
       Users: users,
@@ -235,12 +233,21 @@ export default function GroupApp({
             })}
           </div>
         )}
-        <MessageWondow message={message} onClickDel={onClickDel} />
+        <MessageWondow
+          message={message}
+          onClickDel={onClickDel}
+          onSend={sendMessage}
+          onInput={val => {
+            console.log('val', val);
+            setValue(val);
+          }}
+        />
       </div>
       {
         // 输入窗口
       }
       <Textarea
+        value={value}
         onContentChange={val => setValue(val)}
         onClickSend={() => sendMessage(value)}
         userList={[

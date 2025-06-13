@@ -191,12 +191,18 @@ export default function PrivateApp({
             })}
           </div>
         )}
-        <MessageWondow message={message} onClickDel={onClickDel} />
+        <MessageWondow
+          message={message}
+          onClickDel={onClickDel}
+          onSend={sendMessage}
+          onInput={val => setValue(val)}
+        />
       </div>
       {
         // 输入窗口
       }
       <Textarea
+        value={value}
         onContentChange={val => setValue(val)}
         onClickSend={() => sendMessage(value)}
         userList={[]}

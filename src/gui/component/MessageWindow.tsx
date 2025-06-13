@@ -4,10 +4,14 @@ import MessageBubble from './MessageBubble';
 
 export default function MessageWondow({
   message,
-  onClickDel
+  onClickDel,
+  onSend = () => {},
+  onInput = () => {}
 }: {
   message: Message[];
   onClickDel: (item: Message) => void;
+  onSend: (value: string) => void;
+  onInput: (value: string) => void;
 }) {
   const MessageWindowRef = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -49,6 +53,8 @@ export default function MessageWondow({
             }
             <MessageBubble
               messageBody={item.MessageBody}
+              onSend={onSend}
+              onInput={onInput}
               createAt={item.createAt}
             />
             {

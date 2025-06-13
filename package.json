@@ -3,7 +3,7 @@
   "displayName": "ALemonJS GUI",
   "publisher": "lemonade-x",
   "description": "阿柠檬机器人可视化界面",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "scripts": {
     "dev": "vite",
     "bundle": "tsc && NODE_ENV='development' vite build",

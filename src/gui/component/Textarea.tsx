@@ -3,14 +3,14 @@ import { User } from '../typing';
 import { SendIcon } from '../ui/Icons';
 
 interface TextareaProps extends React.HTMLAttributes<HTMLTextAreaElement> {
-  // value: string;
+  value: string;
   onContentChange?: (content: string) => void;
   onClickSend: () => void;
   userList?: User[];
 }
 
 export default function Textarea({
-  // value,
+  value,
   onContentChange,
   onClickSend,
   userList,
@@ -37,6 +37,15 @@ export default function Textarea({
     // 当输入框内容改变时，触发回调函数
     onContentChange?.(textareaValue);
   }, [textareaValue]);
+
+  useEffect(() => {
+    // 如果value有值，且textareaValue不等于value，则更新textareaValue
+    if (value && textareaValue !== value) {
+      setTextareaValue(value);
+      // 确保输入框聚焦
+      textareaRef.current?.focus();
+    }
+  }, [value]);
 
   // useEffect(() => {
   //   textareaValue !== value && setTextareaValue(value);
